@@ -1478,15 +1478,24 @@ navUpcoming.addEventListener('click', (e) => {
 if (navGenre) {
     navGenre.addEventListener('click', (e) => {
         e.preventDefault();
+        e.stopPropagation();
         const navDropdown = navGenre.closest('.nav-dropdown');
         
-        // 모바일에서는 드롭다운 토글
-        if (window.innerWidth <= 768) {
-            navDropdown.classList.toggle('active');
+        // 데스크톱과 모바일 모두 토글 방식
+        if (navDropdown.classList.contains('active')) {
+            // 이미 열려있으면 닫기
+            if (window.innerWidth <= 768) {
+                closeGenreDropdown();
+            } else {
+                navDropdown.classList.remove('active');
+            }
         } else {
-            // 데스크톱에서는 모든 장르 페이지로 이동
-            changeCategory('allGenres');
-            navDropdown.classList.remove('active');
+            // 닫혀있으면 열기
+            if (window.innerWidth <= 768) {
+                openGenreDropdown();
+            } else {
+                navDropdown.classList.add('active');
+            }
         }
     });
 }
