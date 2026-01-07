@@ -527,71 +527,13 @@ function createMovieCard(movie, index) {
         card.addEventListener('mouseleave', stopVideoPreview);
     }
     
-    // 모바일: 터치 이벤트
-    let touchStartTime = 0;
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let isTouchHold = false;
-    let isScrolling = false;
+    // 모바일: 터치 이벤트 - 스크롤만 허용, 자동 페이지 이동 없음
+    // 모바일에서는 재생 버튼을 통해서만 시네마틱 뷰어 열기
     
-    card.addEventListener('touchstart', (e) => {
-        touchStartTime = Date.now();
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        isTouchHold = false;
-        isScrolling = false;
-        
-        // 길게 누르면 프리뷰 재생 (스크롤 중이 아닐 때만)
-        hoverTimeout = setTimeout(() => {
-            if (!isScrolling) {
-                isTouchHold = true;
-                startVideoPreview();
-            }
-        }, 800); // 800ms로 늘려서 실수 방지
-    }, { passive: true });
-    
-    card.addEventListener('touchend', (e) => {
-        const touchDuration = Date.now() - touchStartTime;
-        
-        clearTimeout(hoverTimeout);
-        
-        if (isScrolling) {
-            // 스크롤 중이었으면 아무것도 하지 않음
-            isScrolling = false;
-            return;
-        }
-        
-        if (isTouchHold) {
-            // 길게 눌렀다 뗀 경우 - 비디오 정지
-            stopVideoPreview();
-            isTouchHold = false;
-        } else if (touchDuration < 150) {
-            // 아주 짧게 탭한 경우 (150ms 미만) - 시네마틱 뷰어 열기
-            openCinematicViewer(movie);
-        }
-    }, { passive: true });
-    
-    card.addEventListener('touchmove', (e) => {
-        // 터치 이동 거리 계산 (가로, 세로 모두)
-        const touchMoveX = e.touches[0].clientX;
-        const touchMoveY = e.touches[0].clientY;
-        const moveDistanceX = Math.abs(touchMoveX - touchStartX);
-        const moveDistanceY = Math.abs(touchMoveY - touchStartY);
-        
-        // 5px 이상 이동하면 스크롤로 간주 (더 민감하게)
-        if (moveDistanceX > 5 || moveDistanceY > 5) {
-            isScrolling = true;
-            clearTimeout(hoverTimeout);
-            if (isTouchHold) {
-                stopVideoPreview();
-                isTouchHold = false;
-            }
-        }
-    }, { passive: true });
-    
-    // 클릭 시 시네마틱 뷰어 열기 (데스크톱)
+    // 클릭 시 시네마틱 뷰어 열기 (데스크톱만)
     card.addEventListener('click', (e) => {
-        if (isMobile) return; // 모바일은 터치 이벤트로 처리
+        // 모바일에서는 카드 클릭으로 페이지 이동 안함
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
         
         e.stopPropagation();
         stopVideoPreview();
@@ -1937,45 +1879,13 @@ if (heroInfoBtn) {
     });
 }
 
-// 히어로 배너 클릭 시 시네마틱 뷰어 열기 (모바일 스크롤 구분)
+// 히어로 배너 클릭 시 시네마틱 뷰어 열기 (데스크톱만)
+// 모바일에서는 버튼을 통해서만 접근 가능
 if (heroBanner) {
-    let heroTouchStartX = 0;
-    let heroTouchStartY = 0;
-    let heroTouchStartTime = 0;
-    let heroIsScrolling = false;
-    
-    // 터치 시작
-    heroBanner.addEventListener('touchstart', (e) => {
-        heroTouchStartX = e.touches[0].clientX;
-        heroTouchStartY = e.touches[0].clientY;
-        heroTouchStartTime = Date.now();
-        heroIsScrolling = false;
-    }, { passive: true });
-    
-    // 터치 이동 (스크롤 감지)
-    heroBanner.addEventListener('touchmove', (e) => {
-        const moveDistanceX = Math.abs(e.touches[0].clientX - heroTouchStartX);
-        const moveDistanceY = Math.abs(e.touches[0].clientY - heroTouchStartY);
-        // 5px 이상 이동하면 스크롤로 간주
-        if (moveDistanceX > 5 || moveDistanceY > 5) {
-            heroIsScrolling = true;
-        }
-    }, { passive: true });
-    
-    // 터치 종료
-    heroBanner.addEventListener('touchend', (e) => {
-        const touchDuration = Date.now() - heroTouchStartTime;
-        
-        // 스크롤 중이 아니고, 아주 짧은 탭이고, 버튼이 아닌 경우에만
-        if (!heroIsScrolling && touchDuration < 150 && !e.target.closest('button') && heroMovie) {
-            openCinematicViewer(heroMovie);
-        }
-    }, { passive: true });
-    
-    // 데스크톱 클릭
+    // 데스크톱 클릭만 허용
     heroBanner.addEventListener('click', (e) => {
-        // 모바일에서는 터치 이벤트로 처리
-        if ('ontouchstart' in window) return;
+        // 모바일에서는 배너 클릭으로 페이지 이동 안함
+        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
         
         // 버튼 클릭이 아닌 경우에만
         if (!e.target.closest('button') && heroMovie) {
