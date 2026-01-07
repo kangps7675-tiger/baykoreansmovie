@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0a0f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="description" content="현재 상영 중인 영화와 예고편을 확인하세요">
+    <title>Baykoreans - 현재 상영 영화</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <!-- 왼쪽: 로고 -->
+            <div class="nav-left">
+                <div class="logo">BAYKOREANS</div>
+            </div>
+
+            <!-- 오른쪽: 카테고리 + 검색 버튼 -->
+            <div class="nav-right">
+                <ul class="nav-links">
+                    <li class="search-toggle-wrapper">
+                        <button class="search-toggle" id="searchToggle">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="M21 21l-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </li>
+                    <li><a href="#" class="active" id="navHome">홈</a></li>
+                    <li><a href="#" id="navNowPlaying">현재 상영작</a></li>
+                    <li><a href="#" id="navPopular">인기 영화</a></li>
+                    <li><a href="#" id="navUpcoming">최신 영화</a></li>
+                    <li class="nav-dropdown">
+                        <a href="#" id="navGenre">장르영화 <span class="dropdown-arrow">▼</span></a>
+                        <ul class="genre-dropdown" id="genreDropdown">
+                            <li><a href="#" data-genre="28">액션</a></li>
+                            <li><a href="#" data-genre="35">코미디</a></li>
+                            <li><a href="#" data-genre="18">드라마</a></li>
+                            <li><a href="#" data-genre="27">공포</a></li>
+                            <li><a href="#" data-genre="10749">로맨스</a></li>
+                            <li><a href="#" data-genre="878">SF</a></li>
+                            <li><a href="#" data-genre="53">스릴러</a></li>
+                            <li><a href="#" data-genre="16">애니메이션</a></li>
+                            <li><a href="#" data-genre="14">판타지</a></li>
+                            <li><a href="#" data-genre="80">범죄</a></li>
+                            <li><a href="#" data-genre="99">다큐멘터리</a></li>
+                            <li><a href="#" data-genre="10402">음악</a></li>
+                            <li><a href="#" data-genre="10752">전쟁</a></li>
+                            <li><a href="#" data-genre="36">시대극</a></li>
+                            <li class="genre-divider"></li>
+                            <li><a href="#" data-category="korean">🇰🇷 한국영화</a></li>
+                            <li><a href="#" data-category="foreign">🌍 해외영화</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- 데스크톱: 네비게이션 바 위 인라인 검색창 -->
+            <div class="nav-search-expand" id="navSearchExpand">
+                <div class="nav-search-inner">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="M21 21l-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" class="search-input" id="searchInput" placeholder="영화 제목을 검색하세요..." autocomplete="off">
+                    <button class="search-clear" id="searchClear">&times;</button>
+                    <button class="nav-search-close" id="navSearchClose">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 6L6 18M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="nav-search-dropdown" id="navSearchDropdown">
+                    <div class="trending-keywords" id="trendingKeywords">
+                        <span class="trending-label">🔥 실시간 인기</span>
+                        <div class="keywords-slider" id="keywordsSlider">
+                            <!-- 인기 키워드가 여기에 동적으로 추가됩니다 -->
+                        </div>
+                    </div>
+                    <div class="search-results" id="searchResults">
+                        <!-- 검색 결과가 여기에 동적으로 추가됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 모바일: 검색 오버레이 -->
+        <div class="search-overlay mobile-only" id="searchOverlay">
+            <div class="search-modal">
+                <button class="search-modal-close" id="searchModalClose">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <div class="search-modal-content">
+                    <div class="search-box">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="M21 21l-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" class="search-input" id="mobileSearchInput" placeholder="영화 제목을 검색하세요..." autocomplete="off">
+                        <button class="search-clear" id="mobileSearchClear">&times;</button>
+                    </div>
+                    <div class="trending-keywords" id="mobileTrendingKeywords">
+                        <span class="trending-label">🔥 실시간 인기</span>
+                        <div class="keywords-slider" id="mobileKeywordsSlider">
+                            <!-- 인기 키워드가 여기에 동적으로 추가됩니다 -->
+                        </div>
+                    </div>
+                    <div class="search-results" id="mobileSearchResults">
+                        <!-- 검색 결과가 여기에 동적으로 추가됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- 히어로 섹션: 인기 영화 배너 -->
+        <section class="hero-banner" id="heroBanner">
+            <div class="hero-backdrop" id="heroBackdrop"></div>
+            <div class="hero-video-container" id="heroVideoContainer">
+                <iframe class="hero-video" id="heroVideo" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content" id="heroContent">
+                <h1 class="hero-movie-title" id="heroMovieTitle">로딩 중...</h1>
+                <p class="hero-movie-overview" id="heroMovieOverview"></p>
+                <div class="hero-movie-meta" id="heroMovieMeta"></div>
+                <div class="hero-buttons">
+                    <button class="hero-btn hero-btn-play" id="heroPlayBtn">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        예고편 보기
+                    </button>
+                    <button class="hero-btn hero-btn-info" id="heroInfoBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        상세정보
+                    </button>
+                </div>
+            </div>
+            <div class="hero-gradient"></div>
+            <!-- 음소거 토글 버튼 -->
+            <button class="hero-mute-btn" id="heroMuteBtn" title="음소거 토글">
+                <svg class="mute-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <line x1="23" y1="9" x2="17" y2="15"></line>
+                    <line x1="17" y1="9" x2="23" y2="15"></line>
+                </svg>
+                <svg class="unmute-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+            </button>
+        </section>
+
+        <section class="movies-section">
+            <h2 class="section-title">🎬 Now Playing</h2>
+            <div class="movies-grid" id="moviesGrid">
+                <!-- 영화 카드가 여기에 동적으로 추가됩니다 -->
+            </div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>영화를 불러오는 중...</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 BAYKOREANS. TMDB API를 사용합니다.</p>
+        <p class="tmdb-credit">
+            <img src="https://www.themoviedb.org/assets/2/v4/logos/v2/blue_short-8e7b30f73a4020692ccca9c88bafe5dcb6f8a62a4c6bc55cd9ba82bb2cd95f6c.svg" alt="TMDB Logo" class="tmdb-logo">
+        </p>
+    </footer>
+
+    <div class="modal" id="movieModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-body" id="modalBody">
+                <!-- 모달 내용이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 시네마틱 전체화면 예고편 뷰어 -->
+    <div class="cinematic-viewer" id="cinematicViewer">
+        <div class="cinematic-video-wrapper">
+            <iframe class="cinematic-video" id="cinematicVideo" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+            <div class="cinematic-overlay"></div>
+        </div>
+        <div class="cinematic-info" id="cinematicInfo">
+            <!-- 영화 정보가 여기에 동적으로 추가됩니다 -->
+        </div>
+        <button class="cinematic-close" id="cinematicClose">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+        </button>
+        <div class="cinematic-loading" id="cinematicLoading">
+            <div class="cinematic-spinner"></div>
+            <p>예고편을 불러오는 중...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
