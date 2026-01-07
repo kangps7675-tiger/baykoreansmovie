@@ -529,39 +529,59 @@ function createMovieCard(movie, index) {
     
     // 모바일: 터치 이벤트
     let touchStartTime = 0;
+    let touchStartY = 0;
     let isTouchHold = false;
+    let isScrolling = false;
     
     card.addEventListener('touchstart', (e) => {
         touchStartTime = Date.now();
+        touchStartY = e.touches[0].clientY;
         isTouchHold = false;
+        isScrolling = false;
         
-        // 길게 누르면 프리뷰 재생
+        // 길게 누르면 프리뷰 재생 (스크롤 중이 아닐 때만)
         hoverTimeout = setTimeout(() => {
-            isTouchHold = true;
-            startVideoPreview();
-        }, 400);
+            if (!isScrolling) {
+                isTouchHold = true;
+                startVideoPreview();
+            }
+        }, 600); // 400ms -> 600ms로 늘려서 실수 방지
     }, { passive: true });
     
     card.addEventListener('touchend', (e) => {
         const touchDuration = Date.now() - touchStartTime;
         
+        clearTimeout(hoverTimeout);
+        
+        if (isScrolling) {
+            // 스크롤 중이었으면 아무것도 하지 않음
+            isScrolling = false;
+            return;
+        }
+        
         if (isTouchHold) {
             // 길게 눌렀다 뗀 경우 - 비디오 정지
             stopVideoPreview();
             isTouchHold = false;
-        } else if (touchDuration < 400) {
-            // 짧게 탭한 경우 - 시네마틱 뷰어 열기
-            clearTimeout(hoverTimeout);
+        } else if (touchDuration < 300) {
+            // 짧게 탭한 경우 (300ms 미만) - 시네마틱 뷰어 열기
             openCinematicViewer(movie);
         }
     }, { passive: true });
     
-    card.addEventListener('touchmove', () => {
-        // 터치 이동 시 취소
-        clearTimeout(hoverTimeout);
-        if (isTouchHold) {
-            stopVideoPreview();
-            isTouchHold = false;
+    card.addEventListener('touchmove', (e) => {
+        // 터치 이동 거리 계산
+        const touchMoveY = e.touches[0].clientY;
+        const moveDistance = Math.abs(touchMoveY - touchStartY);
+        
+        // 10px 이상 이동하면 스크롤로 간주
+        if (moveDistance > 10) {
+            isScrolling = true;
+            clearTimeout(hoverTimeout);
+            if (isTouchHold) {
+                stopVideoPreview();
+                isTouchHold = false;
+            }
         }
     }, { passive: true });
     
