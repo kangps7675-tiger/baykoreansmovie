@@ -1172,10 +1172,13 @@ async function openCinematicViewer(movie) {
     
     // 예고편 로드
     const videoKey = await fetchMovieVideo(movie.id);
+    const isMobileDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     
     if (videoKey) {
-        // YouTube 전체화면 자동재생
-        cinematicVideo.src = `https://www.youtube.com/embed/${videoKey}?autoplay=1&mute=0&controls=1&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=${videoKey}`;
+        // YouTube 전체화면 자동재생 (모바일은 음소거 상태로 시작, 사용자가 탭하면 소리 재생)
+        // playsinline: 모바일에서 인라인 재생
+        // enablejsapi: JavaScript API 활성화
+        cinematicVideo.src = `https://www.youtube.com/embed/${videoKey}?autoplay=1&mute=${isMobileDevice ? 1 : 0}&controls=1&modestbranding=1&rel=0&showinfo=0&loop=1&playlist=${videoKey}&playsinline=1&enablejsapi=1`;
         
         cinematicVideo.onload = () => {
             cinematicLoading.classList.add('hidden');
@@ -1766,8 +1769,10 @@ async function initHeroBanner(category = 'home', genreId = null) {
         heroVideoKey = await fetchMovieVideo(heroMovie.id);
         
         if (heroVideoKey && heroVideo) {
-            // 자동 재생 (음소거 상태로 시작)
-            heroVideo.src = `https://www.youtube.com/embed/${heroVideoKey}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1&loop=1&playlist=${heroVideoKey}&start=10`;
+            // 자동 재생 (음소거 상태로 시작 - 모바일/데스크톱 모두 자동재생 가능)
+            // playsinline: iOS에서 인라인 재생 허용
+            // enablejsapi: JavaScript API 활성화
+            heroVideo.src = `https://www.youtube.com/embed/${heroVideoKey}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1&loop=1&playlist=${heroVideoKey}&start=10&enablejsapi=1`;
             heroVideoLoaded = true;
             
             // 비디오 로드 후 컨테이너 표시
@@ -1798,7 +1803,7 @@ function toggleHeroMute() {
     
     // iframe src 업데이트 (mute 파라미터 변경)
     const muteParam = isHeroMuted ? 1 : 0;
-    heroVideo.src = `https://www.youtube.com/embed/${heroVideoKey}?autoplay=1&mute=${muteParam}&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1&loop=1&playlist=${heroVideoKey}&start=10`;
+    heroVideo.src = `https://www.youtube.com/embed/${heroVideoKey}?autoplay=1&mute=${muteParam}&controls=0&modestbranding=1&rel=0&showinfo=0&playsinline=1&loop=1&playlist=${heroVideoKey}&start=10&enablejsapi=1`;
     
     // 버튼 아이콘 변경
     if (heroMuteBtn) {
