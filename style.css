@@ -3035,3 +3035,38 @@ body {
     }
 }
 
+/* ===== 모바일 스크롤 프로그레스 바 ===== */
+.scroll-progress-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: transparent;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.scroll-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(
+        90deg,
+        rgba(59, 130, 246, 0.3) 0%,
+        rgba(59, 130, 246, 0.6) 50%,
+        rgba(59, 130, 246, 0.3) 100%
+    );
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: width 0.1s ease-out;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+/* 모바일에서만 표시 */
+@media (max-width: 768px) {
+    .scroll-progress-container {
+        display: block;
+    }
+}
+

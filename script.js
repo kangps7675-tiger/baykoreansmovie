@@ -1857,9 +1857,35 @@ function syncMobileTabBar(category) {
     });
 }
 
+// 모바일 스크롤 프로그레스 바
+const scrollProgressBar = document.getElementById('scrollProgressBar');
+
+function updateScrollProgress() {
+    if (!scrollProgressBar) return;
+    
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrollPercent = (scrollTop / scrollHeight) * 100;
+    
+    scrollProgressBar.style.width = `${Math.min(scrollPercent, 100)}%`;
+}
+
+// 스크롤 이벤트 (throttle 적용)
+let scrollTicking = false;
+window.addEventListener('scroll', () => {
+    if (!scrollTicking) {
+        window.requestAnimationFrame(() => {
+            updateScrollProgress();
+            scrollTicking = false;
+        });
+        scrollTicking = true;
+    }
+});
+
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
     initHeroBanner();
     renderMovies('home');
     initTrendingKeywords();
+    updateScrollProgress(); // 초기 스크롤 위치 반영
 });
