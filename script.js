@@ -1583,7 +1583,8 @@ function closeGenreDropdown() {
     const navDropdown = document.querySelector('.nav-dropdown');
     const wrapper = document.querySelector('.genre-dropdown-wrapper');
     
-    if (!navDropdown || !navDropdown.classList.contains('active')) {
+    // 열려있는지 확인 (body 클래스로 체크)
+    if (!document.body.classList.contains('genre-dropdown-open')) {
         return; // 이미 닫혀있으면 아무것도 안함
     }
     
@@ -1600,9 +1601,8 @@ function closeGenreDropdown() {
             navDropdown.classList.remove('active');
         }
         if (wrapper) {
-            wrapper.style.opacity = '';
-            wrapper.style.transform = '';
-            wrapper.style.visibility = '';
+            // 스타일 초기화
+            wrapper.style.cssText = '';
         }
         // body 스크롤 복구 및 오버레이 제거
         document.body.style.overflow = '';
@@ -1615,17 +1615,27 @@ function openGenreDropdown() {
     const navDropdown = document.querySelector('.nav-dropdown');
     const wrapper = document.querySelector('.genre-dropdown-wrapper');
     
+    // 클래스 추가
     if (navDropdown) {
         navDropdown.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        document.body.classList.add('genre-dropdown-open');
-        
-        // 모바일에서 직접 스타일 적용 (CSS 우선순위 문제 해결)
-        if (wrapper && window.innerWidth <= 768) {
-            wrapper.style.opacity = '1';
-            wrapper.style.visibility = 'visible';
-            wrapper.style.transform = 'translateY(0)';
-        }
+    }
+    document.body.style.overflow = 'hidden';
+    document.body.classList.add('genre-dropdown-open');
+    
+    // 모바일에서 직접 스타일 적용 (CSS 우선순위 문제 해결)
+    if (wrapper) {
+        // 강제로 스타일 적용
+        wrapper.style.cssText = `
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateY(0) !important;
+            display: flex !important;
+            position: fixed !important;
+            bottom: 70px !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 9999 !important;
+        `;
     }
 }
 
