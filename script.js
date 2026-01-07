@@ -1588,31 +1588,34 @@ document.querySelector('.logo').addEventListener('click', () => {
 const genreDropdownClose = document.getElementById('genreDropdownClose');
 if (genreDropdownClose) {
     // 닫기 함수
-    const closeGenreDropdown = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
+    const closeGenreDropdownFunc = () => {
         const navDropdown = document.querySelector('.nav-dropdown');
         if (navDropdown) {
             navDropdown.classList.remove('active');
+            console.log('드롭다운 닫힘'); // 디버깅용
         }
     };
     
-    // 클릭 이벤트
-    genreDropdownClose.addEventListener('click', closeGenreDropdown);
-    
-    // 터치 이벤트 (모바일)
-    let touchStarted = false;
-    genreDropdownClose.addEventListener('touchstart', (e) => {
-        touchStarted = true;
+    // 클릭 이벤트 (데스크톱)
+    genreDropdownClose.addEventListener('click', (e) => {
+        e.preventDefault();
         e.stopPropagation();
+        closeGenreDropdownFunc();
+    });
+    
+    // 터치 이벤트 (모바일) - touchstart에서 바로 처리
+    genreDropdownClose.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        // 약간의 딜레이 후 닫기 (터치 피드백 보여주기 위해)
+        setTimeout(() => {
+            closeGenreDropdownFunc();
+        }, 100);
     }, { passive: true });
     
+    // touchend에서 기본 동작 방지
     genreDropdownClose.addEventListener('touchend', (e) => {
-        if (touchStarted) {
-            closeGenreDropdown(e);
-            touchStarted = false;
-        }
+        e.preventDefault();
+        e.stopPropagation();
     }, { passive: false });
 }
 
