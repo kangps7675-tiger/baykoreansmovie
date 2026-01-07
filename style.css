@@ -25,7 +25,7 @@
 html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    overscroll-behavior-y: contain; /* pull-to-refresh 방지하면서 스크롤 유지 */
+    overscroll-behavior: contain; /* 모든 방향 overscroll 방지 */
 }
 
 body {
@@ -37,9 +37,10 @@ body {
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior-y: contain;
-    /* 모바일 부드러운 스크롤 */
+    overscroll-behavior: contain;
+    /* 모바일 부드러운 스크롤 - 세로만 허용 */
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y pinch-zoom; /* 세로 스크롤과 줌만 허용, 좌우 스와이프 비활성화 */
 }
 
 /* iOS safe area */
