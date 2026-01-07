@@ -1606,7 +1606,8 @@ function closeGenreDropdown() {
     if (wrapper) {
         // 부드러운 사라짐 애니메이션
         wrapper.style.opacity = '0';
-        wrapper.style.transform = 'translateY(100%)';
+        wrapper.style.transform = 'translateY(calc(100% + 70px))';
+        wrapper.style.visibility = 'hidden';
     }
     
     // 애니메이션 후 클래스 제거
@@ -1617,6 +1618,7 @@ function closeGenreDropdown() {
         if (wrapper) {
             wrapper.style.opacity = '';
             wrapper.style.transform = '';
+            wrapper.style.visibility = '';
         }
         // body 스크롤 복구 및 오버레이 제거
         document.body.style.overflow = '';
@@ -1627,10 +1629,19 @@ function closeGenreDropdown() {
 // 장르 드롭다운 열기 함수
 function openGenreDropdown() {
     const navDropdown = document.querySelector('.nav-dropdown');
+    const wrapper = document.querySelector('.genre-dropdown-wrapper');
+    
     if (navDropdown) {
         navDropdown.classList.add('active');
         document.body.style.overflow = 'hidden';
         document.body.classList.add('genre-dropdown-open');
+        
+        // 모바일에서 직접 스타일 적용 (CSS 우선순위 문제 해결)
+        if (wrapper && window.innerWidth <= 768) {
+            wrapper.style.opacity = '1';
+            wrapper.style.visibility = 'visible';
+            wrapper.style.transform = 'translateY(0)';
+        }
     }
 }
 

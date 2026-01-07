@@ -2088,19 +2088,19 @@ body {
 
     /* 모바일 드롭다운 wrapper */
     .genre-dropdown-wrapper {
-        display: flex;
+        display: flex !important;
         flex-direction: column;
-        position: fixed;
-        top: auto;
-        bottom: 70px; /* 탭바 높이만큼 위로 */
-        left: 0;
-        right: 0;
-        transform: translateY(100%);
-        background: rgba(18, 18, 26, 0.98);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        border-radius: 20px 20px 0 0;
-        max-height: calc(100vh - 140px); /* 탭바 + 헤더 공간 제외 */
-        z-index: 9999; /* 최상위로 */
+        position: fixed !important;
+        top: auto !important;
+        bottom: 70px !important; /* 탭바 높이만큼 위로 */
+        left: 0 !important;
+        right: 0 !important;
+        transform: translateY(calc(100% + 70px)) !important; /* 완전히 화면 밖으로 */
+        background: rgba(18, 18, 26, 0.98) !important;
+        border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        border-radius: 20px 20px 0 0 !important;
+        max-height: calc(100vh - 140px) !important; /* 탭바 + 헤더 공간 제외 */
+        z-index: 9999 !important; /* 최상위로 */
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
@@ -2110,9 +2110,9 @@ body {
     }
 
     .nav-dropdown.active .genre-dropdown-wrapper {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important;
     }
     
     /* 드롭다운 배경 오버레이 - body 클래스로 처리 */
