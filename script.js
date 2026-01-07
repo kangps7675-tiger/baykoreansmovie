@@ -1584,6 +1584,25 @@ document.querySelector('.logo').addEventListener('click', () => {
     changeCategory('home');
 });
 
+// 장르 드롭다운 닫기 버튼 (모바일)
+const genreDropdownClose = document.getElementById('genreDropdownClose');
+if (genreDropdownClose) {
+    genreDropdownClose.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const navDropdown = document.querySelector('.nav-dropdown');
+        if (navDropdown) navDropdown.classList.remove('active');
+    });
+    
+    // 터치 이벤트도 추가
+    genreDropdownClose.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const navDropdown = document.querySelector('.nav-dropdown');
+        if (navDropdown) navDropdown.classList.remove('active');
+    }, { passive: false });
+}
+
 // 드롭다운 외부 클릭 시 닫기
 document.addEventListener('click', (e) => {
     const navDropdown = document.querySelector('.nav-dropdown');

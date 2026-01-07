@@ -632,6 +632,11 @@ body {
 .nav-dropdown:hover .genre-dropdown li:nth-child(22),
 .nav-dropdown.active .genre-dropdown li:nth-child(22) { transition-delay: 0.44s; }
 
+/* 데스크톱에서 드롭다운 헤더 숨기기 */
+.genre-dropdown-header {
+    display: none;
+}
+
 .genre-dropdown a {
     display: block;
     padding: 0.7rem 1.2rem;
@@ -2037,13 +2042,50 @@ body {
     }
 
     .genre-dropdown::before {
-        content: '';
-        display: block;
-        width: 40px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 2px;
-        margin: 0 auto 1rem;
+        display: none; /* 모바일에서는 헤더로 대체 */
+    }
+
+    .genre-dropdown-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        margin-bottom: 0.5rem;
+        position: sticky;
+        top: 0;
+        background: rgba(18, 18, 26, 0.98);
+        z-index: 10;
+    }
+
+    .genre-dropdown-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .genre-dropdown-close {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .genre-dropdown-close:active {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(0.95);
+    }
+
+    .genre-dropdown-close svg {
+        width: 20px;
+        height: 20px;
     }
 
     .genre-dropdown a {
