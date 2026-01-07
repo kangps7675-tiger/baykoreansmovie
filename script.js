@@ -1546,13 +1546,14 @@ if (genreDropdown) {
             e.preventDefault();
             e.stopPropagation();
             
+            // 드롭다운 닫기 (공통)
+            const navDropdown = document.querySelector('.nav-dropdown');
+            if (navDropdown) navDropdown.classList.remove('active');
+            
             // 카테고리 (한국영화/해외영화)
             const category = genreLink.dataset.category;
             if (category) {
                 changeCategory(category);
-                // 드롭다운 닫기
-                const navDropdown = document.querySelector('.nav-dropdown');
-                if (navDropdown) navDropdown.classList.remove('active');
                 // 모바일 탭바 동기화
                 syncMobileTabBar('allGenres');
                 return;
