@@ -135,19 +135,24 @@ const categoryConfig = {
 // 장르 설정
 const genreConfig = {
     28: { name: '액션', emoji: '🎬' },
-    35: { name: '코미디', emoji: '😂' },
-    18: { name: '드라마', emoji: '🎭' },
-    27: { name: '공포', emoji: '👻' },
-    10749: { name: '로맨스', emoji: '💕' },
-    878: { name: 'SF', emoji: '🚀' },
-    53: { name: '스릴러', emoji: '😱' },
+    12: { name: '모험', emoji: '🗺️' },
     16: { name: '애니메이션', emoji: '🎨' },
-    14: { name: '판타지', emoji: '🧙' },
+    35: { name: '코미디', emoji: '😂' },
     80: { name: '범죄', emoji: '🔫' },
     99: { name: '다큐멘터리', emoji: '📹' },
+    18: { name: '드라마', emoji: '🎭' },
+    10751: { name: '가족', emoji: '👨‍👩‍👧' },
+    14: { name: '판타지', emoji: '🧙' },
+    36: { name: '시대극', emoji: '🏰' },
+    27: { name: '공포', emoji: '👻' },
     10402: { name: '음악', emoji: '🎵' },
+    9648: { name: '미스터리', emoji: '🔍' },
+    10749: { name: '로맨스', emoji: '💕' },
+    878: { name: 'SF', emoji: '🚀' },
+    10770: { name: 'TV 영화', emoji: '📺' },
+    53: { name: '스릴러', emoji: '😱' },
     10752: { name: '전쟁', emoji: '⚔️' },
-    36: { name: '시대극', emoji: '🏰' }
+    37: { name: '서부', emoji: '🤠' }
 };
 
 // 현재 선택된 장르

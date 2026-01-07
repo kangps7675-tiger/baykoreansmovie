@@ -551,7 +551,7 @@ body {
     opacity: 1;
     visibility: visible;
     transform: translateX(-50%) translateY(5px);
-    max-height: 70vh;
+    max-height: 80vh;
     overflow-y: auto;
 }
 
@@ -621,6 +621,16 @@ body {
 .nav-dropdown.active .genre-dropdown li:nth-child(16) { transition-delay: 0.32s; }
 .nav-dropdown:hover .genre-dropdown li:nth-child(17),
 .nav-dropdown.active .genre-dropdown li:nth-child(17) { transition-delay: 0.34s; }
+.nav-dropdown:hover .genre-dropdown li:nth-child(18),
+.nav-dropdown.active .genre-dropdown li:nth-child(18) { transition-delay: 0.36s; }
+.nav-dropdown:hover .genre-dropdown li:nth-child(19),
+.nav-dropdown.active .genre-dropdown li:nth-child(19) { transition-delay: 0.38s; }
+.nav-dropdown:hover .genre-dropdown li:nth-child(20),
+.nav-dropdown.active .genre-dropdown li:nth-child(20) { transition-delay: 0.40s; }
+.nav-dropdown:hover .genre-dropdown li:nth-child(21),
+.nav-dropdown.active .genre-dropdown li:nth-child(21) { transition-delay: 0.42s; }
+.nav-dropdown:hover .genre-dropdown li:nth-child(22),
+.nav-dropdown.active .genre-dropdown li:nth-child(22) { transition-delay: 0.44s; }
 
 .genre-dropdown a {
     display: block;
