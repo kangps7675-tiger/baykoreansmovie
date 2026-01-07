@@ -2923,3 +2923,115 @@ body {
     background: var(--accent-blue-hover);
 }
 
+/* ===== 모바일 탭바 ===== */
+.mobile-tab-bar {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 15, 0.98);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 0.5rem 0;
+    padding-bottom: calc(0.5rem + env(safe-area-inset-bottom));
+    z-index: 1000;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 12px;
+    min-width: 60px;
+}
+
+.tab-item svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+}
+
+.tab-item span {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.tab-item.active {
+    color: var(--accent-blue);
+}
+
+.tab-item.active svg {
+    transform: scale(1.1);
+}
+
+.tab-item:active {
+    transform: scale(0.95);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+/* 모바일에서만 탭바 표시 */
+@media (max-width: 768px) {
+    .mobile-tab-bar {
+        display: flex;
+    }
+    
+    /* 탭바 공간 확보를 위한 하단 패딩 */
+    body {
+        padding-bottom: 70px;
+    }
+    
+    .footer {
+        padding-bottom: 80px;
+    }
+    
+    /* 네비게이션 카테고리 숨기기 (탭바로 대체) */
+    .nav-links > li:not(.search-toggle-wrapper):not(.nav-dropdown) {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab-item {
+        min-width: 50px;
+        padding: 0.4rem 0.5rem;
+    }
+    
+    .tab-item svg {
+        width: 22px;
+        height: 22px;
+    }
+    
+    .tab-item span {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .tab-item {
+        min-width: 45px;
+        padding: 0.3rem 0.4rem;
+    }
+    
+    .tab-item svg {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .tab-item span {
+        font-size: 0.55rem;
+    }
+}
+

@@ -803,6 +803,9 @@ function changeCategory(category) {
             break;
     }
     
+    // 모바일 탭바 동기화
+    syncMobileTabBar(category);
+    
     // 영화 목록 다시 렌더링
     renderMovies(category);
 }
@@ -1814,6 +1817,42 @@ if (heroBanner) {
         // 버튼 클릭이 아닌 경우에만
         if (!e.target.closest('button') && heroMovie) {
             openCinematicViewer(heroMovie);
+        }
+    });
+}
+
+// 모바일 탭바 이벤트
+const mobileTabBar = document.getElementById('mobileTabBar');
+if (mobileTabBar) {
+    const tabItems = mobileTabBar.querySelectorAll('.tab-item');
+    
+    tabItems.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const category = tab.dataset.category;
+            
+            // 활성화 상태 업데이트
+            tabItems.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            // 데스크톱 네비게이션도 동기화
+            navLinks.forEach(link => link.classList.remove('active'));
+            
+            // 카테고리 변경
+            changeCategory(category);
+        });
+    });
+}
+
+// 카테고리 변경 시 탭바도 동기화하는 함수
+function syncMobileTabBar(category) {
+    if (!mobileTabBar) return;
+    
+    const tabItems = mobileTabBar.querySelectorAll('.tab-item');
+    tabItems.forEach(tab => {
+        if (tab.dataset.category === category) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
         }
     });
 }
