@@ -25,6 +25,8 @@
 html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    overscroll-behavior: none; /* pull-to-refresh 방지 */
+    overscroll-behavior-y: none;
 }
 
 body {
@@ -36,6 +38,8 @@ body {
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none; /* pull-to-refresh 방지 */
+    overscroll-behavior-y: none;
 }
 
 /* iOS safe area */

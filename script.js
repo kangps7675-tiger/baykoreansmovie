@@ -637,9 +637,6 @@ async function renderMovies(category = 'home', genreId = null) {
             
             // 장르별 섹션 렌더링
             renderAllGenresView(allGenreMovies);
-            
-            // 페이지 상단으로 스크롤
-            window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         } else {
             // 일반 카테고리
@@ -695,9 +692,6 @@ async function renderMovies(category = 'home', genreId = null) {
             const card = createMovieCard(movie, index);
             if (moviesGrid) moviesGrid.appendChild(card);
         });
-        
-        // 페이지 상단으로 스크롤
-        window.scrollTo({ top: 0, behavior: 'smooth' });
         
     } catch (error) {
         console.error('영화 목록 렌더링 중 오류 발생:', error);
@@ -831,6 +825,9 @@ function changeCategory(category) {
     // 모바일 탭바 동기화
     syncMobileTabBar(category);
     
+    // 페이지 상단으로 스크롤 (카테고리 변경 시에만)
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
     // 영화 목록 다시 렌더링
     renderMovies(category);
 }
@@ -864,6 +861,9 @@ function changeGenre(genreId) {
     if (navDropdown) {
         navDropdown.classList.remove('active');
     }
+    
+    // 페이지 상단으로 스크롤 (장르 변경 시에만)
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     // 영화 목록 다시 렌더링
     renderMovies('genre', genreId);
