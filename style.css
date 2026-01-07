@@ -1491,8 +1491,6 @@ body {
     cursor: pointer;
     transition: var(--transition-smooth);
     animation: fadeInUp 0.6s ease-out backwards;
-    /* 스크롤 성능 최적화 */
-    contain: layout style paint;
 }
 
 .movie-card:hover {
@@ -1900,29 +1898,20 @@ body {
 /* Responsive - 태블릿 */
 @media (max-width: 768px) {
     /* 모바일 부드러운 스크롤 최적화 */
-    html {
+    html, body {
         scroll-behavior: smooth;
         -webkit-overflow-scrolling: touch;
     }
     
-    body {
-        /* 터치 스크롤 최적화 */
-        -webkit-overflow-scrolling: touch;
-        touch-action: pan-y;
-    }
-    
-    /* 스크롤 성능을 위한 레이어 분리 (필요한 요소만) */
-    .header,
-    .mobile-tab-bar,
-    .scroll-progress-container {
-        will-change: transform;
+    * {
+        /* 스크롤 성능 최적화 */
+        -webkit-transform: translateZ(0);
         transform: translateZ(0);
-        backface-visibility: hidden;
     }
     
     .main {
-        /* 컨텐츠 영역 최적화 */
-        contain: content;
+        /* 부드러운 스크롤을 위한 하드웨어 가속 */
+        will-change: scroll-position;
     }
 
     .nav {
@@ -2060,6 +2049,19 @@ body {
     .nav-dropdown {
         position: static;
     }
+    
+    /* 모바일에서 드롭다운 오버레이는 body에 추가 */
+    body.genre-dropdown-open::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 9998;
+        animation: fadeIn 0.3s ease;
+    }
 
     .genre-dropdown {
         position: fixed;
@@ -2090,20 +2092,21 @@ body {
         flex-direction: column;
         position: fixed;
         top: auto;
-        bottom: 70px; /* 탭바 위에 표시 */
+        bottom: 70px; /* 탭바 높이만큼 위로 */
         left: 0;
         right: 0;
         transform: translateY(100%);
         background: rgba(18, 18, 26, 0.98);
         border: 1px solid rgba(59, 130, 246, 0.3);
         border-radius: 20px 20px 0 0;
-        max-height: calc(100vh - 150px); /* 탭바와 헤더 공간 제외 */
-        z-index: 3000; /* 탭바보다 위에 */
+        max-height: calc(100vh - 140px); /* 탭바 + 헤더 공간 제외 */
+        z-index: 9999; /* 최상위로 */
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
     }
 
     .nav-dropdown.active .genre-dropdown-wrapper {
@@ -2112,18 +2115,8 @@ body {
         transform: translateY(0);
     }
     
-    /* 드롭다운 배경 오버레이 */
-    .nav-dropdown.active::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 2999; /* wrapper보다 1 낮게 */
-        animation: fadeIn 0.3s ease;
-    }
+    /* 드롭다운 배경 오버레이 - body 클래스로 처리 */
+    /* .nav-dropdown.active::before는 position:static에서 작동 안함 */
     
     @keyframes fadeIn {
         from { opacity: 0; }

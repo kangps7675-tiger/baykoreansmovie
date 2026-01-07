@@ -1618,9 +1618,20 @@ function closeGenreDropdown() {
             wrapper.style.opacity = '';
             wrapper.style.transform = '';
         }
-        // body 스크롤 복구
+        // body 스크롤 복구 및 오버레이 제거
         document.body.style.overflow = '';
+        document.body.classList.remove('genre-dropdown-open');
     }, 300);
+}
+
+// 장르 드롭다운 열기 함수
+function openGenreDropdown() {
+    const navDropdown = document.querySelector('.nav-dropdown');
+    if (navDropdown) {
+        navDropdown.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('genre-dropdown-open');
+    }
 }
 
 // 장르 드롭다운 닫기 버튼 (모바일)
@@ -1911,9 +1922,42 @@ if (heroInfoBtn) {
     });
 }
 
-// 히어로 배너 클릭 시 시네마틱 뷰어 열기
+// 히어로 배너 클릭 시 시네마틱 뷰어 열기 (모바일 스크롤 구분)
 if (heroBanner) {
+    let heroTouchStartY = 0;
+    let heroTouchStartTime = 0;
+    let heroIsScrolling = false;
+    
+    // 터치 시작
+    heroBanner.addEventListener('touchstart', (e) => {
+        heroTouchStartY = e.touches[0].clientY;
+        heroTouchStartTime = Date.now();
+        heroIsScrolling = false;
+    }, { passive: true });
+    
+    // 터치 이동 (스크롤 감지)
+    heroBanner.addEventListener('touchmove', (e) => {
+        const moveDistance = Math.abs(e.touches[0].clientY - heroTouchStartY);
+        if (moveDistance > 10) {
+            heroIsScrolling = true;
+        }
+    }, { passive: true });
+    
+    // 터치 종료
+    heroBanner.addEventListener('touchend', (e) => {
+        const touchDuration = Date.now() - heroTouchStartTime;
+        
+        // 스크롤 중이 아니고, 짧은 탭이고, 버튼이 아닌 경우에만
+        if (!heroIsScrolling && touchDuration < 300 && !e.target.closest('button') && heroMovie) {
+            openCinematicViewer(heroMovie);
+        }
+    }, { passive: true });
+    
+    // 데스크톱 클릭
     heroBanner.addEventListener('click', (e) => {
+        // 모바일에서는 터치 이벤트로 처리
+        if ('ontouchstart' in window) return;
+        
         // 버튼 클릭이 아닌 경우에만
         if (!e.target.closest('button') && heroMovie) {
             openCinematicViewer(heroMovie);
@@ -1943,9 +1987,7 @@ if (mobileTabBar) {
                         closeGenreDropdown();
                     } else {
                         // 열기
-                        navDropdown.classList.add('active');
-                        // body 스크롤 방지
-                        document.body.style.overflow = 'hidden';
+                        openGenreDropdown();
                     }
                 }
                 // 활성화 상태 업데이트
