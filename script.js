@@ -590,31 +590,25 @@ async function renderMovies(category = 'home', genreId = null) {
         if (moviesGrid) moviesGrid.innerHTML = '';
     
     let movies = [];
-    let title, heroTitleText, heroDescText;
+    let title = '🎬 Now Playing';
     
     // 장르 영화인 경우
     if (genreId && genreConfig[genreId]) {
         const genre = genreConfig[genreId];
         title = `${genre.emoji} ${genre.name} 영화`;
-        heroTitleText = `${genre.name} 영화`;
-        heroDescText = `인기 있는 ${genre.name} 장르의 영화들을 확인하세요`;
         movies = await fetchMoviesByGenre(genreId);
     } else if (category === 'allGenres') {
         // 모든 장르별 영화 표시
         const config = categoryConfig[category];
         title = config.title;
-        heroTitleText = config.heroTitle;
-        heroDescText = config.heroDesc;
         
         // UI 업데이트
         if (sectionTitle) sectionTitle.textContent = title;
-        if (heroTitle) heroTitle.textContent = heroTitleText;
-        if (heroDesc) heroDesc.textContent = heroDescText;
         
         // 모든 장르 영화 가져오기
         const allGenreMovies = await fetchAllGenresMovies();
         
-        loading.classList.add('hidden');
+        if (loading) loading.classList.add('hidden');
         
         // 장르별 섹션 렌더링
         renderAllGenresView(allGenreMovies);
@@ -629,13 +623,9 @@ async function renderMovies(category = 'home', genreId = null) {
         // config가 없으면 기본값 사용
         if (!config) {
             title = '🎬 Now Playing';
-            heroTitleText = '현재 상영 중인 영화';
-            heroDescText = '지금 극장에서 만나볼 수 있는 최신 영화들을 확인하세요';
             movies = await fetchNowPlayingMovies();
         } else {
             title = config.title;
-            heroTitleText = config.heroTitle;
-            heroDescText = config.heroDesc;
             
             // 해당 카테고리의 영화 가져오기
             switch (config.fetchFn) {
@@ -663,10 +653,8 @@ async function renderMovies(category = 'home', genreId = null) {
     
     // UI 업데이트
     if (sectionTitle) sectionTitle.textContent = title;
-    if (heroTitle) heroTitle.textContent = heroTitleText;
-    if (heroDesc) heroDesc.textContent = heroDescText;
     
-    loading.classList.add('hidden');
+    if (loading) loading.classList.add('hidden');
     
     if (movies.length === 0) {
         moviesGrid.innerHTML = `
