@@ -1584,31 +1584,44 @@ document.querySelector('.logo').addEventListener('click', () => {
     changeCategory('home');
 });
 
-// 장르 드롭다운 닫기 버튼 (모바일)
-const genreDropdownClose = document.getElementById('genreDropdownClose');
-if (genreDropdownClose) {
-    // 닫기 함수
-    const closeGenreDropdownFunc = () => {
-        const navDropdown = document.querySelector('.nav-dropdown');
-        if (navDropdown) {
+// 장르 드롭다운 닫기 함수 (전역)
+function closeGenreDropdown() {
+    const navDropdown = document.querySelector('.nav-dropdown');
+    const wrapper = document.querySelector('.genre-dropdown-wrapper');
+    
+    if (wrapper) {
+        // 부드러운 사라짐 애니메이션
+        wrapper.style.opacity = '0';
+        wrapper.style.transform = 'translateY(100%)';
+    }
+    
+    if (navDropdown) {
+        // 애니메이션 후 클래스 제거
+        setTimeout(() => {
             navDropdown.classList.remove('active');
-        }
-    };
-    
-    // 포인터 이벤트 (모든 디바이스에서 작동)
-    genreDropdownClose.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        closeGenreDropdownFunc();
-    });
-    
-    // 클릭 이벤트 (폴백)
-    genreDropdownClose.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        closeGenreDropdownFunc();
-    });
+            if (wrapper) {
+                wrapper.style.opacity = '';
+                wrapper.style.transform = '';
+            }
+        }, 300);
+    }
 }
+
+// 장르 드롭다운 닫기 버튼 (모바일)
+document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById('genreDropdownClose');
+    if (closeBtn) {
+        // 모든 이벤트 타입에 대응
+        ['click', 'touchstart', 'pointerdown'].forEach(eventType => {
+            closeBtn.addEventListener(eventType, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                closeGenreDropdown();
+            }, { passive: false, capture: true });
+        });
+    }
+});
 
 // 드롭다운 외부 클릭 시 닫기
 document.addEventListener('click', (e) => {
