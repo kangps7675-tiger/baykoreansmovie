@@ -2090,15 +2090,15 @@ body {
         flex-direction: column;
         position: fixed;
         top: auto;
-        bottom: 0;
+        bottom: 70px; /* 탭바 위에 표시 */
         left: 0;
         right: 0;
         transform: translateY(100%);
         background: rgba(18, 18, 26, 0.98);
         border: 1px solid rgba(59, 130, 246, 0.3);
         border-radius: 20px 20px 0 0;
-        max-height: 70vh;
-        z-index: 2000;
+        max-height: calc(100vh - 150px); /* 탭바와 헤더 공간 제외 */
+        z-index: 3000; /* 탭바보다 위에 */
         opacity: 0;
         visibility: hidden;
         transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
@@ -2120,8 +2120,8 @@ body {
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1999;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 2999; /* wrapper보다 1 낮게 */
         animation: fadeIn 0.3s ease;
     }
     

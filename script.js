@@ -1553,25 +1553,28 @@ if (genreDropdown) {
             e.preventDefault();
             e.stopPropagation();
             
-            // 드롭다운 닫기 (공통)
-            const navDropdown = document.querySelector('.nav-dropdown');
-            if (navDropdown) navDropdown.classList.remove('active');
+            // 드롭다운 닫기 (공통) - closeGenreDropdown 함수 사용
+            closeGenreDropdown();
             
             // 카테고리 (한국영화/해외영화)
             const category = genreLink.dataset.category;
             if (category) {
-                changeCategory(category);
-                // 모바일 탭바 동기화
-                syncMobileTabBar('allGenres');
+                // 약간의 딜레이 후 카테고리 변경 (드롭다운 닫힘 애니메이션 후)
+                setTimeout(() => {
+                    changeCategory(category);
+                    syncMobileTabBar('allGenres');
+                }, 100);
                 return;
             }
             
             // 장르
             const genreId = parseInt(genreLink.dataset.genre);
             if (genreId) {
-                changeGenre(genreId);
-                // 모바일 탭바 동기화 (장르 선택 시)
-                syncMobileTabBar('allGenres');
+                // 약간의 딜레이 후 장르 변경 (드롭다운 닫힘 애니메이션 후)
+                setTimeout(() => {
+                    changeGenre(genreId);
+                    syncMobileTabBar('allGenres');
+                }, 100);
             }
         };
         
@@ -1596,22 +1599,28 @@ function closeGenreDropdown() {
     const navDropdown = document.querySelector('.nav-dropdown');
     const wrapper = document.querySelector('.genre-dropdown-wrapper');
     
+    if (!navDropdown || !navDropdown.classList.contains('active')) {
+        return; // 이미 닫혀있으면 아무것도 안함
+    }
+    
     if (wrapper) {
         // 부드러운 사라짐 애니메이션
         wrapper.style.opacity = '0';
         wrapper.style.transform = 'translateY(100%)';
     }
     
-    if (navDropdown) {
-        // 애니메이션 후 클래스 제거
-        setTimeout(() => {
+    // 애니메이션 후 클래스 제거
+    setTimeout(() => {
+        if (navDropdown) {
             navDropdown.classList.remove('active');
-            if (wrapper) {
-                wrapper.style.opacity = '';
-                wrapper.style.transform = '';
-            }
-        }, 300);
-    }
+        }
+        if (wrapper) {
+            wrapper.style.opacity = '';
+            wrapper.style.transform = '';
+        }
+        // body 스크롤 복구
+        document.body.style.overflow = '';
+    }, 300);
 }
 
 // 장르 드롭다운 닫기 버튼 (모바일)
@@ -1914,6 +1923,8 @@ if (heroBanner) {
 
 // 모바일 탭바 이벤트
 const mobileTabBar = document.getElementById('mobileTabBar');
+const mobileGenreDropdown = document.querySelector('.genre-dropdown-wrapper');
+
 if (mobileTabBar) {
     const tabItems = mobileTabBar.querySelectorAll('.tab-item');
     
@@ -1925,7 +1936,17 @@ if (mobileTabBar) {
             if (category === 'allGenres') {
                 const navDropdown = document.querySelector('.nav-dropdown');
                 if (navDropdown) {
-                    navDropdown.classList.toggle('active');
+                    const isActive = navDropdown.classList.contains('active');
+                    
+                    if (isActive) {
+                        // 닫기
+                        closeGenreDropdown();
+                    } else {
+                        // 열기
+                        navDropdown.classList.add('active');
+                        // body 스크롤 방지
+                        document.body.style.overflow = 'hidden';
+                    }
                 }
                 // 활성화 상태 업데이트
                 tabItems.forEach(t => t.classList.remove('active'));
@@ -1934,10 +1955,7 @@ if (mobileTabBar) {
             }
             
             // 다른 탭 클릭 시 드롭다운 닫기
-            const navDropdown = document.querySelector('.nav-dropdown');
-            if (navDropdown) {
-                navDropdown.classList.remove('active');
-            }
+            closeGenreDropdown();
             
             // 활성화 상태 업데이트
             tabItems.forEach(t => t.classList.remove('active'));
