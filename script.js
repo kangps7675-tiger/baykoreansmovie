@@ -529,12 +529,14 @@ function createMovieCard(movie, index) {
     
     // 모바일: 터치 이벤트
     let touchStartTime = 0;
+    let touchStartX = 0;
     let touchStartY = 0;
     let isTouchHold = false;
     let isScrolling = false;
     
     card.addEventListener('touchstart', (e) => {
         touchStartTime = Date.now();
+        touchStartX = e.touches[0].clientX;
         touchStartY = e.touches[0].clientY;
         isTouchHold = false;
         isScrolling = false;
@@ -545,7 +547,7 @@ function createMovieCard(movie, index) {
                 isTouchHold = true;
                 startVideoPreview();
             }
-        }, 600); // 400ms -> 600ms로 늘려서 실수 방지
+        }, 800); // 800ms로 늘려서 실수 방지
     }, { passive: true });
     
     card.addEventListener('touchend', (e) => {
@@ -563,19 +565,21 @@ function createMovieCard(movie, index) {
             // 길게 눌렀다 뗀 경우 - 비디오 정지
             stopVideoPreview();
             isTouchHold = false;
-        } else if (touchDuration < 300) {
-            // 짧게 탭한 경우 (300ms 미만) - 시네마틱 뷰어 열기
+        } else if (touchDuration < 150) {
+            // 아주 짧게 탭한 경우 (150ms 미만) - 시네마틱 뷰어 열기
             openCinematicViewer(movie);
         }
     }, { passive: true });
     
     card.addEventListener('touchmove', (e) => {
-        // 터치 이동 거리 계산
+        // 터치 이동 거리 계산 (가로, 세로 모두)
+        const touchMoveX = e.touches[0].clientX;
         const touchMoveY = e.touches[0].clientY;
-        const moveDistance = Math.abs(touchMoveY - touchStartY);
+        const moveDistanceX = Math.abs(touchMoveX - touchStartX);
+        const moveDistanceY = Math.abs(touchMoveY - touchStartY);
         
-        // 10px 이상 이동하면 스크롤로 간주
-        if (moveDistance > 10) {
+        // 5px 이상 이동하면 스크롤로 간주 (더 민감하게)
+        if (moveDistanceX > 5 || moveDistanceY > 5) {
             isScrolling = true;
             clearTimeout(hoverTimeout);
             if (isTouchHold) {
@@ -1935,12 +1939,14 @@ if (heroInfoBtn) {
 
 // 히어로 배너 클릭 시 시네마틱 뷰어 열기 (모바일 스크롤 구분)
 if (heroBanner) {
+    let heroTouchStartX = 0;
     let heroTouchStartY = 0;
     let heroTouchStartTime = 0;
     let heroIsScrolling = false;
     
     // 터치 시작
     heroBanner.addEventListener('touchstart', (e) => {
+        heroTouchStartX = e.touches[0].clientX;
         heroTouchStartY = e.touches[0].clientY;
         heroTouchStartTime = Date.now();
         heroIsScrolling = false;
@@ -1948,8 +1954,10 @@ if (heroBanner) {
     
     // 터치 이동 (스크롤 감지)
     heroBanner.addEventListener('touchmove', (e) => {
-        const moveDistance = Math.abs(e.touches[0].clientY - heroTouchStartY);
-        if (moveDistance > 10) {
+        const moveDistanceX = Math.abs(e.touches[0].clientX - heroTouchStartX);
+        const moveDistanceY = Math.abs(e.touches[0].clientY - heroTouchStartY);
+        // 5px 이상 이동하면 스크롤로 간주
+        if (moveDistanceX > 5 || moveDistanceY > 5) {
             heroIsScrolling = true;
         }
     }, { passive: true });
@@ -1958,8 +1966,8 @@ if (heroBanner) {
     heroBanner.addEventListener('touchend', (e) => {
         const touchDuration = Date.now() - heroTouchStartTime;
         
-        // 스크롤 중이 아니고, 짧은 탭이고, 버튼이 아닌 경우에만
-        if (!heroIsScrolling && touchDuration < 300 && !e.target.closest('button') && heroMovie) {
+        // 스크롤 중이 아니고, 아주 짧은 탭이고, 버튼이 아닌 경우에만
+        if (!heroIsScrolling && touchDuration < 150 && !e.target.closest('button') && heroMovie) {
             openCinematicViewer(heroMovie);
         }
     }, { passive: true });

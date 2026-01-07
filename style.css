@@ -37,10 +37,10 @@ body {
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overscroll-behavior: contain;
-    /* 모바일 부드러운 스크롤 - 세로만 허용 */
+    overscroll-behavior-x: none; /* 가로 overscroll만 방지 */
+    overscroll-behavior-y: contain;
+    /* 모바일 부드러운 스크롤 */
     -webkit-overflow-scrolling: touch;
-    touch-action: pan-y pinch-zoom; /* 세로 스크롤과 줌만 허용, 좌우 스와이프 비활성화 */
 }
 
 /* iOS safe area */
