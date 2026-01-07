@@ -2065,27 +2065,36 @@ body {
     }
 
     .genre-dropdown-close {
-        width: 36px;
-        height: 36px;
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        min-height: 40px;
         border-radius: 50%;
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
         color: var(--text-primary);
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.2s ease;
+        z-index: 100;
+        pointer-events: auto;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
     }
 
+    .genre-dropdown-close:hover,
     .genre-dropdown-close:active {
-        background: rgba(255, 255, 255, 0.2);
+        background: rgba(239, 68, 68, 0.8);
+        border-color: rgba(239, 68, 68, 1);
         transform: scale(0.95);
     }
 
     .genre-dropdown-close svg {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
+        pointer-events: none;
     }
 
     .genre-dropdown a {

@@ -1587,19 +1587,32 @@ document.querySelector('.logo').addEventListener('click', () => {
 // 장르 드롭다운 닫기 버튼 (모바일)
 const genreDropdownClose = document.getElementById('genreDropdownClose');
 if (genreDropdownClose) {
-    genreDropdownClose.addEventListener('click', (e) => {
+    // 닫기 함수
+    const closeGenreDropdown = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        e.stopImmediatePropagation();
         const navDropdown = document.querySelector('.nav-dropdown');
-        if (navDropdown) navDropdown.classList.remove('active');
-    });
+        if (navDropdown) {
+            navDropdown.classList.remove('active');
+        }
+    };
     
-    // 터치 이벤트도 추가
-    genreDropdownClose.addEventListener('touchend', (e) => {
-        e.preventDefault();
+    // 클릭 이벤트
+    genreDropdownClose.addEventListener('click', closeGenreDropdown);
+    
+    // 터치 이벤트 (모바일)
+    let touchStarted = false;
+    genreDropdownClose.addEventListener('touchstart', (e) => {
+        touchStarted = true;
         e.stopPropagation();
-        const navDropdown = document.querySelector('.nav-dropdown');
-        if (navDropdown) navDropdown.classList.remove('active');
+    }, { passive: true });
+    
+    genreDropdownClose.addEventListener('touchend', (e) => {
+        if (touchStarted) {
+            closeGenreDropdown(e);
+            touchStarted = false;
+        }
     }, { passive: false });
 }
 
