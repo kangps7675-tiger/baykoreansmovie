@@ -1538,10 +1538,11 @@ if (navGenre) {
     });
 }
 
-// 장르 아이템 클릭 이벤트
+// 장르 아이템 클릭/터치 이벤트
 if (genreDropdown) {
     genreDropdown.querySelectorAll('a').forEach(genreLink => {
-        genreLink.addEventListener('click', (e) => {
+        // 클릭 및 터치 핸들러
+        const handleGenreSelect = (e) => {
             e.preventDefault();
             e.stopPropagation();
             
@@ -1552,6 +1553,8 @@ if (genreDropdown) {
                 // 드롭다운 닫기
                 const navDropdown = document.querySelector('.nav-dropdown');
                 if (navDropdown) navDropdown.classList.remove('active');
+                // 모바일 탭바 동기화
+                syncMobileTabBar('allGenres');
                 return;
             }
             
@@ -1559,8 +1562,19 @@ if (genreDropdown) {
             const genreId = parseInt(genreLink.dataset.genre);
             if (genreId) {
                 changeGenre(genreId);
+                // 모바일 탭바 동기화 (장르 선택 시)
+                syncMobileTabBar('allGenres');
             }
-        });
+        };
+        
+        // 클릭 이벤트 (데스크톱)
+        genreLink.addEventListener('click', handleGenreSelect);
+        
+        // 터치 이벤트 (모바일) - touchend로 처리
+        genreLink.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleGenreSelect(e);
+        }, { passive: false });
     });
 }
 
@@ -1859,6 +1873,24 @@ if (mobileTabBar) {
     tabItems.forEach(tab => {
         tab.addEventListener('click', () => {
             const category = tab.dataset.category;
+            
+            // 장르 탭 클릭 시 드롭다운 토글
+            if (category === 'allGenres') {
+                const navDropdown = document.querySelector('.nav-dropdown');
+                if (navDropdown) {
+                    navDropdown.classList.toggle('active');
+                }
+                // 활성화 상태 업데이트
+                tabItems.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                return;
+            }
+            
+            // 다른 탭 클릭 시 드롭다운 닫기
+            const navDropdown = document.querySelector('.nav-dropdown');
+            if (navDropdown) {
+                navDropdown.classList.remove('active');
+            }
             
             // 활성화 상태 업데이트
             tabItems.forEach(t => t.classList.remove('active'));
