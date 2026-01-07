@@ -574,19 +574,20 @@ function createMovieCard(movie, index) {
 
 // 영화 목록 렌더링
 async function renderMovies(category = 'home', genreId = null) {
-    // 현재 재생 중인 비디오 정지
-    if (currentStopFunction) {
-        currentStopFunction();
-        currentlyPlayingCard = null;
-        currentStopFunction = null;
-    }
-    
-    // 히어로 배너 업데이트
-    initHeroBanner(category, genreId);
-    
-    // 로딩 표시
-    loading.classList.remove('hidden');
-    moviesGrid.innerHTML = '';
+    try {
+        // 현재 재생 중인 비디오 정지
+        if (currentStopFunction) {
+            currentStopFunction();
+            currentlyPlayingCard = null;
+            currentStopFunction = null;
+        }
+        
+        // 히어로 배너 업데이트 (비동기로 별도 실행)
+        initHeroBanner(category, genreId);
+        
+        // 로딩 표시
+        if (loading) loading.classList.remove('hidden');
+        if (moviesGrid) moviesGrid.innerHTML = '';
     
     let movies = [];
     let title, heroTitleText, heroDescText;
@@ -624,27 +625,39 @@ async function renderMovies(category = 'home', genreId = null) {
     } else {
         // 일반 카테고리
         const config = categoryConfig[category];
-        title = config.title;
-        heroTitleText = config.heroTitle;
-        heroDescText = config.heroDesc;
         
-        // 해당 카테고리의 영화 가져오기
-        switch (config.fetchFn) {
-            case 'fetchNowPlayingMovies':
-                movies = await fetchNowPlayingMovies();
-                break;
-            case 'fetchPopularMovies':
-                movies = await fetchPopularMovies();
-                break;
-            case 'fetchUpcomingMovies':
-                movies = await fetchUpcomingMovies();
-                break;
-            case 'fetchKoreanMovies':
-                movies = await fetchKoreanMovies();
-                break;
-            case 'fetchForeignMovies':
-                movies = await fetchForeignMovies();
-                break;
+        // config가 없으면 기본값 사용
+        if (!config) {
+            title = '🎬 Now Playing';
+            heroTitleText = '현재 상영 중인 영화';
+            heroDescText = '지금 극장에서 만나볼 수 있는 최신 영화들을 확인하세요';
+            movies = await fetchNowPlayingMovies();
+        } else {
+            title = config.title;
+            heroTitleText = config.heroTitle;
+            heroDescText = config.heroDesc;
+            
+            // 해당 카테고리의 영화 가져오기
+            switch (config.fetchFn) {
+                case 'fetchNowPlayingMovies':
+                    movies = await fetchNowPlayingMovies();
+                    break;
+                case 'fetchPopularMovies':
+                    movies = await fetchPopularMovies();
+                    break;
+                case 'fetchUpcomingMovies':
+                    movies = await fetchUpcomingMovies();
+                    break;
+                case 'fetchKoreanMovies':
+                    movies = await fetchKoreanMovies();
+                    break;
+                case 'fetchForeignMovies':
+                    movies = await fetchForeignMovies();
+                    break;
+                default:
+                    movies = await fetchNowPlayingMovies();
+                    break;
+            }
         }
     }
     
@@ -667,11 +680,24 @@ async function renderMovies(category = 'home', genreId = null) {
     
     movies.forEach((movie, index) => {
         const card = createMovieCard(movie, index);
-        moviesGrid.appendChild(card);
+        if (moviesGrid) moviesGrid.appendChild(card);
     });
     
     // 페이지 상단으로 스크롤
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    } catch (error) {
+        console.error('영화 목록 렌더링 중 오류 발생:', error);
+        if (loading) loading.classList.add('hidden');
+        if (moviesGrid) {
+            moviesGrid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--text-secondary);">
+                    <p style="font-size: 1.2rem;">영화를 불러오는 중 오류가 발생했습니다.</p>
+                    <p style="margin-top: 0.5rem;">페이지를 새로고침 해주세요.</p>
+                </div>
+            `;
+        }
+    }
 }
 
 // 모든 장르별 영화 뷰 렌더링
