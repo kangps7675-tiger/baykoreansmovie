@@ -588,92 +588,92 @@ async function renderMovies(category = 'home', genreId = null) {
         // 로딩 표시
         if (loading) loading.classList.remove('hidden');
         if (moviesGrid) moviesGrid.innerHTML = '';
-    
-    let movies = [];
-    let title = '🎬 Now Playing';
-    
-    // 장르 영화인 경우
-    if (genreId && genreConfig[genreId]) {
-        const genre = genreConfig[genreId];
-        title = `${genre.emoji} ${genre.name} 영화`;
-        movies = await fetchMoviesByGenre(genreId);
-    } else if (category === 'allGenres') {
-        // 모든 장르별 영화 표시
-        const config = categoryConfig[category];
-        title = config.title;
+        
+        let movies = [];
+        let title = '🎬 Now Playing';
+        
+        // 장르 영화인 경우
+        if (genreId && genreConfig[genreId]) {
+            const genre = genreConfig[genreId];
+            title = `${genre.emoji} ${genre.name} 영화`;
+            movies = await fetchMoviesByGenre(genreId);
+        } else if (category === 'allGenres') {
+            // 모든 장르별 영화 표시
+            const config = categoryConfig[category];
+            title = config.title;
+            
+            // UI 업데이트
+            if (sectionTitle) sectionTitle.textContent = title;
+            
+            // 모든 장르 영화 가져오기
+            const allGenreMovies = await fetchAllGenresMovies();
+            
+            if (loading) loading.classList.add('hidden');
+            
+            // 장르별 섹션 렌더링
+            renderAllGenresView(allGenreMovies);
+            
+            // 페이지 상단으로 스크롤
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        } else {
+            // 일반 카테고리
+            const config = categoryConfig[category];
+            
+            // config가 없으면 기본값 사용
+            if (!config) {
+                title = '🎬 Now Playing';
+                movies = await fetchNowPlayingMovies();
+            } else {
+                title = config.title;
+                
+                // 해당 카테고리의 영화 가져오기
+                switch (config.fetchFn) {
+                    case 'fetchNowPlayingMovies':
+                        movies = await fetchNowPlayingMovies();
+                        break;
+                    case 'fetchPopularMovies':
+                        movies = await fetchPopularMovies();
+                        break;
+                    case 'fetchUpcomingMovies':
+                        movies = await fetchUpcomingMovies();
+                        break;
+                    case 'fetchKoreanMovies':
+                        movies = await fetchKoreanMovies();
+                        break;
+                    case 'fetchForeignMovies':
+                        movies = await fetchForeignMovies();
+                        break;
+                    default:
+                        movies = await fetchNowPlayingMovies();
+                        break;
+                }
+            }
+        }
         
         // UI 업데이트
         if (sectionTitle) sectionTitle.textContent = title;
         
-        // 모든 장르 영화 가져오기
-        const allGenreMovies = await fetchAllGenresMovies();
-        
         if (loading) loading.classList.add('hidden');
         
-        // 장르별 섹션 렌더링
-        renderAllGenresView(allGenreMovies);
+        if (movies.length === 0) {
+            moviesGrid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--text-secondary);">
+                    <p style="font-size: 1.2rem;">영화를 불러올 수 없습니다.</p>
+                    <p style="margin-top: 0.5rem;">잠시 후 다시 시도해주세요.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        movies.forEach((movie, index) => {
+            const card = createMovieCard(movie, index);
+            if (moviesGrid) moviesGrid.appendChild(card);
+        });
         
         // 페이지 상단으로 스크롤
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
-    } else {
-        // 일반 카테고리
-        const config = categoryConfig[category];
         
-        // config가 없으면 기본값 사용
-        if (!config) {
-            title = '🎬 Now Playing';
-            movies = await fetchNowPlayingMovies();
-        } else {
-            title = config.title;
-            
-            // 해당 카테고리의 영화 가져오기
-            switch (config.fetchFn) {
-                case 'fetchNowPlayingMovies':
-                    movies = await fetchNowPlayingMovies();
-                    break;
-                case 'fetchPopularMovies':
-                    movies = await fetchPopularMovies();
-                    break;
-                case 'fetchUpcomingMovies':
-                    movies = await fetchUpcomingMovies();
-                    break;
-                case 'fetchKoreanMovies':
-                    movies = await fetchKoreanMovies();
-                    break;
-                case 'fetchForeignMovies':
-                    movies = await fetchForeignMovies();
-                    break;
-                default:
-                    movies = await fetchNowPlayingMovies();
-                    break;
-            }
-        }
-    }
-    
-    // UI 업데이트
-    if (sectionTitle) sectionTitle.textContent = title;
-    
-    if (loading) loading.classList.add('hidden');
-    
-    if (movies.length === 0) {
-        moviesGrid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--text-secondary);">
-                <p style="font-size: 1.2rem;">영화를 불러올 수 없습니다.</p>
-                <p style="margin-top: 0.5rem;">잠시 후 다시 시도해주세요.</p>
-            </div>
-        `;
-        return;
-    }
-    
-    movies.forEach((movie, index) => {
-        const card = createMovieCard(movie, index);
-        if (moviesGrid) moviesGrid.appendChild(card);
-    });
-    
-    // 페이지 상단으로 스크롤
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
     } catch (error) {
         console.error('영화 목록 렌더링 중 오류 발생:', error);
         if (loading) loading.classList.add('hidden');
