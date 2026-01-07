@@ -1592,31 +1592,22 @@ if (genreDropdownClose) {
         const navDropdown = document.querySelector('.nav-dropdown');
         if (navDropdown) {
             navDropdown.classList.remove('active');
-            console.log('드롭다운 닫힘'); // 디버깅용
         }
     };
     
-    // 클릭 이벤트 (데스크톱)
-    genreDropdownClose.addEventListener('click', (e) => {
+    // 포인터 이벤트 (모든 디바이스에서 작동)
+    genreDropdownClose.addEventListener('pointerdown', (e) => {
         e.preventDefault();
         e.stopPropagation();
         closeGenreDropdownFunc();
     });
     
-    // 터치 이벤트 (모바일) - touchstart에서 바로 처리
-    genreDropdownClose.addEventListener('touchstart', (e) => {
-        e.stopPropagation();
-        // 약간의 딜레이 후 닫기 (터치 피드백 보여주기 위해)
-        setTimeout(() => {
-            closeGenreDropdownFunc();
-        }, 100);
-    }, { passive: true });
-    
-    // touchend에서 기본 동작 방지
-    genreDropdownClose.addEventListener('touchend', (e) => {
+    // 클릭 이벤트 (폴백)
+    genreDropdownClose.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-    }, { passive: false });
+        closeGenreDropdownFunc();
+    });
 }
 
 // 드롭다운 외부 클릭 시 닫기
