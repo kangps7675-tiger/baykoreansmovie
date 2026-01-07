@@ -1636,12 +1636,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// 드롭다운 외부 클릭 시 닫기
+// 드롭다운 외부 클릭 시 닫기 (데스크톱만)
 document.addEventListener('click', (e) => {
+    // 모바일에서는 이 이벤트 무시 (탭바로 제어)
+    if (window.innerWidth <= 768) return;
+    
     const navDropdown = document.querySelector('.nav-dropdown');
     if (navDropdown && !navDropdown.contains(e.target)) {
         navDropdown.classList.remove('active');
     }
+});
+
+// 모바일: 오버레이(배경) 클릭 시 드롭다운 닫기
+document.addEventListener('click', (e) => {
+    // 모바일에서만 작동
+    if (window.innerWidth > 768) return;
+    
+    // 드롭다운이 열려있지 않으면 무시
+    if (!document.body.classList.contains('genre-dropdown-open')) return;
+    
+    const wrapper = document.querySelector('.genre-dropdown-wrapper');
+    const tabBar = document.getElementById('mobileTabBar');
+    
+    // 드롭다운 wrapper나 탭바 내부 클릭이면 무시
+    if (wrapper && wrapper.contains(e.target)) return;
+    if (tabBar && tabBar.contains(e.target)) return;
+    
+    // 오버레이(배경) 클릭 시 닫기
+    closeGenreDropdown();
 });
 
 // 검색 오버레이 열기
