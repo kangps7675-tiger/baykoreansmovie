@@ -1494,6 +1494,11 @@ if (navGenre) {
 // 장르 아이템 클릭/터치 이벤트
 if (genreDropdown) {
     genreDropdown.querySelectorAll('a').forEach(genreLink => {
+        // 터치 스크롤 감지용 변수
+        let genreTouchStartY = 0;
+        let genreTouchStartX = 0;
+        let genreIsScrolling = false;
+        
         // 클릭 및 터치 핸들러
         const handleGenreSelect = (e) => {
             e.preventDefault();
@@ -1524,11 +1529,35 @@ if (genreDropdown) {
             }
         };
         
-        // 클릭 이벤트 (데스크톱)
-        genreLink.addEventListener('click', handleGenreSelect);
+        // 클릭 이벤트 (데스크톱만)
+        genreLink.addEventListener('click', (e) => {
+            // 모바일에서는 클릭 이벤트 무시
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
+            handleGenreSelect(e);
+        });
         
-        // 터치 이벤트 (모바일) - touchend로 처리
+        // 터치 시작 (모바일)
+        genreLink.addEventListener('touchstart', (e) => {
+            genreTouchStartY = e.touches[0].clientY;
+            genreTouchStartX = e.touches[0].clientX;
+            genreIsScrolling = false;
+        }, { passive: true });
+        
+        // 터치 이동 - 스크롤 감지
+        genreLink.addEventListener('touchmove', (e) => {
+            const moveX = Math.abs(e.touches[0].clientX - genreTouchStartX);
+            const moveY = Math.abs(e.touches[0].clientY - genreTouchStartY);
+            if (moveX > 5 || moveY > 5) {
+                genreIsScrolling = true;
+            }
+        }, { passive: true });
+        
+        // 터치 종료 - 스크롤 중이 아닐 때만 선택
         genreLink.addEventListener('touchend', (e) => {
+            if (genreIsScrolling) {
+                genreIsScrolling = false;
+                return; // 스크롤 중이었으면 무시
+            }
             e.preventDefault();
             handleGenreSelect(e);
         }, { passive: false });
