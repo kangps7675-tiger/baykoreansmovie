@@ -1491,14 +1491,21 @@ function handleMobileSearchKeydown(e) {
     }
 }
 
-// 스크롤 시 헤더 스타일 변경
+// 스크롤 시 헤더 스타일 변경 (throttle 적용으로 성능 최적화)
+let headerScrollTicking = false;
 window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-        header.classList.add('scrolled');
-    } else {
-        header.classList.remove('scrolled');
+    if (!headerScrollTicking) {
+        window.requestAnimationFrame(() => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+            headerScrollTicking = false;
+        });
+        headerScrollTicking = true;
     }
-});
+}, { passive: true });
 
 // 네비게이션 이벤트 리스너
 navHome.addEventListener('click', (e) => {
@@ -1972,7 +1979,7 @@ function updateScrollProgress() {
     scrollProgressBar.style.width = `${Math.min(scrollPercent, 100)}%`;
 }
 
-// 스크롤 이벤트 (throttle 적용)
+// 스크롤 이벤트 (throttle 적용 + passive로 성능 최적화)
 let scrollTicking = false;
 window.addEventListener('scroll', () => {
     if (!scrollTicking) {
@@ -1982,7 +1989,7 @@ window.addEventListener('scroll', () => {
         });
         scrollTicking = true;
     }
-});
+}, { passive: true });
 
 // 초기화
 document.addEventListener('DOMContentLoaded', () => {
