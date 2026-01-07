@@ -1903,15 +1903,35 @@ body {
         -webkit-overflow-scrolling: touch;
     }
     
-    * {
-        /* 스크롤 성능 최적화 */
-        -webkit-transform: translateZ(0);
+    /* 헤더 고정 강화 */
+    .header {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 1000 !important;
         transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+    }
+    
+    /* 탭바 고정 강화 */
+    .mobile-tab-bar {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        z-index: 1000 !important;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
     }
     
     .main {
-        /* 부드러운 스크롤을 위한 하드웨어 가속 */
-        will-change: scroll-position;
+        /* 컨텐츠 영역 - 히어로 배너에서 margin-top 처리 */
+        position: relative;
     }
 
     .nav {
