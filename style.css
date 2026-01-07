@@ -2130,6 +2130,13 @@ body {
         box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
     }
 
+    /* 모바일에서는 body 클래스로 드롭다운 표시 제어 */
+    body.genre-dropdown-open .genre-dropdown-wrapper {
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) !important;
+    }
+    
     .nav-dropdown.active .genre-dropdown-wrapper {
         opacity: 1 !important;
         visibility: visible !important;
