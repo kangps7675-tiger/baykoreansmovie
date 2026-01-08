@@ -522,17 +522,47 @@ function createMovieCard(movie, index) {
     };
     
     // 데스크톱: 마우스 이벤트
+    // 데스크톱: 호버 시 미리보기 재생
     if (!isMobile) {
         card.addEventListener('mouseenter', startVideoPreview);
         card.addEventListener('mouseleave', stopVideoPreview);
     }
     
-    // 모바일: 터치 이벤트 - 스크롤만 허용, 자동 페이지 이동 없음
-    // 모바일에서는 재생 버튼을 통해서만 시네마틱 뷰어 열기
+    // 모바일: 터치 시 전체화면 예고편 재생 (스크롤과 구분)
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let isTouchScrolling = false;
     
-    // 클릭 시 시네마틱 뷰어 열기 (데스크톱만)
+    card.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        touchStartTime = Date.now();
+        isTouchScrolling = false;
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', (e) => {
+        const moveX = Math.abs(e.touches[0].clientX - touchStartX);
+        const moveY = Math.abs(e.touches[0].clientY - touchStartY);
+        // 5px 이상 이동하면 스크롤로 간주
+        if (moveX > 5 || moveY > 5) {
+            isTouchScrolling = true;
+        }
+    }, { passive: true });
+    
+    card.addEventListener('touchend', (e) => {
+        const touchDuration = Date.now() - touchStartTime;
+        
+        // 스크롤 중이 아니고, 짧은 탭인 경우에만 시네마틱 뷰어 열기
+        if (!isTouchScrolling && touchDuration < 300) {
+            e.preventDefault();
+            openCinematicViewer(movie);
+        }
+    }, { passive: false });
+    
+    // 클릭 시 시네마틱 뷰어 열기 (데스크톱)
     card.addEventListener('click', (e) => {
-        // 모바일에서는 카드 클릭으로 페이지 이동 안함
+        // 모바일에서는 터치 이벤트로 처리
         if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
         
         e.stopPropagation();
