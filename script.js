@@ -1935,7 +1935,8 @@ if (heroPlayBtn) {
 if (heroInfoBtn) {
     heroInfoBtn.addEventListener('click', () => {
         if (heroMovie) {
-            openCinematicViewer(heroMovie);
+            // TMDB 영화 상세 페이지로 이동
+            window.open(`https://www.themoviedb.org/movie/${heroMovie.id}`, '_blank');
         }
     });
 }
