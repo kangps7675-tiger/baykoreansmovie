@@ -1163,6 +1163,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
+    pointer-events: none; /* 클릭 이벤트 통과 */
     background: linear-gradient(
         to right,
         rgba(10, 10, 15, 0.9) 0%,
@@ -1181,6 +1182,7 @@ body {
     height: 200px;
     background: linear-gradient(to top, var(--bg-primary) 0%, transparent 100%);
     z-index: 2;
+    pointer-events: none; /* 클릭 이벤트 통과 */
 }
 
 .hero-banner .hero-content {
@@ -1244,6 +1246,9 @@ body {
     transition: var(--transition-smooth);
     border: none;
     font-family: inherit;
+    position: relative;
+    z-index: 10; /* 오버레이 위에 표시 */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .hero-btn svg {
@@ -1362,6 +1367,7 @@ body {
     right: 0;
     height: 150px;
     background: linear-gradient(to top, var(--bg-primary), transparent);
+    pointer-events: none; /* 클릭 이벤트 통과 */
 }
 
 /* Movies Section */
