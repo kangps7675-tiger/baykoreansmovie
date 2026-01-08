@@ -528,58 +528,10 @@ function createMovieCard(movie, index) {
         card.addEventListener('mouseleave', stopVideoPreview);
     }
     
-    // 모바일: 터치 시 전체화면 예고편 재생 (스크롤과 구분)
-    if (isMobile) {
-        let cardTouchStartX = 0;
-        let cardTouchStartY = 0;
-        let cardTouchStartTime = 0;
-        let cardIsTouchScrolling = false;
-        
-        card.addEventListener('touchstart', (e) => {
-            cardTouchStartX = e.touches[0].clientX;
-            cardTouchStartY = e.touches[0].clientY;
-            cardTouchStartTime = Date.now();
-            cardIsTouchScrolling = false;
-        }, { passive: true });
-        
-        card.addEventListener('touchmove', (e) => {
-            const moveX = Math.abs(e.touches[0].clientX - cardTouchStartX);
-            const moveY = Math.abs(e.touches[0].clientY - cardTouchStartY);
-            // 10px 이상 이동하면 스크롤로 간주
-            if (moveX > 10 || moveY > 10) {
-                cardIsTouchScrolling = true;
-            }
-        }, { passive: true });
-        
-        card.addEventListener('touchend', (e) => {
-            // 스크롤 중이면 무시
-            if (cardIsTouchScrolling) {
-                cardIsTouchScrolling = false;
-                return;
-            }
-            
-            const touchDuration = Date.now() - cardTouchStartTime;
-            
-            // 짧은 탭인 경우에만 시네마틱 뷰어 열기
-            if (touchDuration < 400) {
-                e.preventDefault();
-                e.stopPropagation();
-                openCinematicViewer(movie);
-            }
-        }, { passive: false });
-        
-        // 모바일에서 click 이벤트도 막기
-        card.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-        });
-    }
-    
-    // 클릭 시 시네마틱 뷰어 열기 (데스크톱)
+    // 클릭/터치 시 시네마틱 뷰어 열기
+    // 모바일과 데스크톱 모두 click 이벤트 사용 (터치 디바이스에서도 click 이벤트 발생)
     card.addEventListener('click', (e) => {
-        // 모바일에서는 터치 이벤트로 처리
-        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
-        
+        e.preventDefault();
         e.stopPropagation();
         stopVideoPreview();
         openCinematicViewer(movie);
@@ -1545,32 +1497,25 @@ if (navGenre) {
     });
 }
 
-// 장르 아이템 클릭/터치 이벤트
+// 장르 아이템 클릭 이벤트 (데스크톱 전용 - 모바일은 별도 드롭다운 사용)
 if (genreDropdown) {
     genreDropdown.querySelectorAll('a').forEach(genreLink => {
-        // 터치 스크롤 감지용 변수
-        let genreTouchStartY = 0;
-        let genreTouchStartX = 0;
-        let genreIsScrolling = false;
-        
-        // 클릭 및 터치 핸들러
+        // 클릭 핸들러 (데스크톱 전용)
         const handleGenreSelect = (e) => {
+            // 모바일에서는 완전히 무시
+            if (window.innerWidth <= 768) return;
+            
             e.preventDefault();
             e.stopPropagation();
             
-            // 드롭다운 닫기 (공통) - closeGenreDropdown 함수 사용
+            // 드롭다운 닫기
             closeGenreDropdown();
             
             // 카테고리 (한국영화/해외영화)
             const category = genreLink.dataset.category;
             if (category) {
-                // 약간의 딜레이 후 카테고리 변경 (드롭다운 닫힘 애니메이션 후)
                 setTimeout(() => {
                     changeCategory(category);
-                    // 장르 드롭다운에서 선택했으므로 탭바를 장르로 변경
-                    if (window.innerWidth <= 768) {
-                        syncMobileTabBar('allGenres');
-                    }
                 }, 100);
                 return;
             }
@@ -1578,49 +1523,14 @@ if (genreDropdown) {
             // 장르
             const genreId = parseInt(genreLink.dataset.genre);
             if (genreId) {
-                // 약간의 딜레이 후 장르 변경 (드롭다운 닫힘 애니메이션 후)
                 setTimeout(() => {
                     changeGenre(genreId);
-                    // 장르 드롭다운에서 선택했으므로 탭바를 장르로 변경
-                    if (window.innerWidth <= 768) {
-                        syncMobileTabBar('allGenres');
-                    }
                 }, 100);
             }
         };
         
-        // 클릭 이벤트 (데스크톱만)
-        genreLink.addEventListener('click', (e) => {
-            // 모바일에서는 클릭 이벤트 무시
-            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
-            handleGenreSelect(e);
-        });
-        
-        // 터치 시작 (모바일)
-        genreLink.addEventListener('touchstart', (e) => {
-            genreTouchStartY = e.touches[0].clientY;
-            genreTouchStartX = e.touches[0].clientX;
-            genreIsScrolling = false;
-        }, { passive: true });
-        
-        // 터치 이동 - 스크롤 감지
-        genreLink.addEventListener('touchmove', (e) => {
-            const moveX = Math.abs(e.touches[0].clientX - genreTouchStartX);
-            const moveY = Math.abs(e.touches[0].clientY - genreTouchStartY);
-            if (moveX > 5 || moveY > 5) {
-                genreIsScrolling = true;
-            }
-        }, { passive: true });
-        
-        // 터치 종료 - 스크롤 중이 아닐 때만 선택
-        genreLink.addEventListener('touchend', (e) => {
-            if (genreIsScrolling) {
-                genreIsScrolling = false;
-                return; // 스크롤 중이었으면 무시
-            }
-            e.preventDefault();
-            handleGenreSelect(e);
-        }, { passive: false });
+        // 클릭 이벤트만 (데스크톱 전용)
+        genreLink.addEventListener('click', handleGenreSelect);
     });
 }
 
@@ -2015,14 +1925,9 @@ if (heroInfoBtn) {
     });
 }
 
-// 히어로 배너 클릭 시 시네마틱 뷰어 열기 (데스크톱만)
-// 모바일에서는 버튼을 통해서만 접근 가능
+// 히어로 배너 클릭 시 시네마틱 뷰어 열기
 if (heroBanner) {
-    // 데스크톱 클릭만 허용
     heroBanner.addEventListener('click', (e) => {
-        // 모바일에서는 배너 클릭으로 페이지 이동 안함
-        if ('ontouchstart' in window || navigator.maxTouchPoints > 0) return;
-        
         // 버튼 클릭이 아닌 경우에만
         if (!e.target.closest('button') && heroMovie) {
             openCinematicViewer(heroMovie);
