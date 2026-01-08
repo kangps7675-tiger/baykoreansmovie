@@ -3167,6 +3167,122 @@ body {
     background: rgba(59, 130, 246, 0.1);
 }
 
+/* 모바일 장르 드롭다운 (독립적) */
+.mobile-genre-dropdown {
+    display: none;
+    position: fixed;
+    bottom: 70px;
+    left: 0;
+    right: 0;
+    background: rgba(18, 18, 26, 0.98);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 20px 20px 0 0;
+    max-height: calc(100vh - 140px);
+    z-index: 10000;
+    flex-direction: column;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.mobile-genre-dropdown.active {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.mobile-genre-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(18, 18, 26, 0.98);
+    flex-shrink: 0;
+}
+
+.mobile-genre-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.mobile-genre-close {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.mobile-genre-close:active {
+    transform: scale(0.9);
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
+.mobile-genre-close svg {
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+}
+
+.mobile-genre-list {
+    list-style: none;
+    padding: 0.5rem 0 1rem;
+    margin: 0;
+    overflow-y: auto;
+    flex: 1;
+    -webkit-overflow-scrolling: touch;
+}
+
+.mobile-genre-list li a {
+    display: block;
+    padding: 0.9rem 1.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.mobile-genre-list li a:active {
+    background: rgba(59, 130, 246, 0.3);
+    color: #ffffff;
+    border-left-color: var(--accent-blue);
+}
+
+.mobile-genre-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0.5rem 1.5rem;
+}
+
+/* 모바일 장르 드롭다운 오버레이 */
+body.mobile-genre-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
 /* 모바일에서만 탭바 표시 */
 @media (max-width: 768px) {
     .mobile-tab-bar {

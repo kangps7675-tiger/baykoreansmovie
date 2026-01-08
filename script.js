@@ -1581,76 +1581,91 @@ document.querySelector('.logo').addEventListener('click', () => {
 // 장르 드롭다운 닫기 함수 (전역)
 function closeGenreDropdown() {
     const navDropdown = document.querySelector('.nav-dropdown');
-    const wrapper = document.querySelector('.genre-dropdown-wrapper');
+    const mobileDropdown = document.getElementById('mobileGenreDropdown');
     
-    // 열려있는지 확인 (body 클래스로 체크)
-    if (!document.body.classList.contains('genre-dropdown-open')) {
-        return; // 이미 닫혀있으면 아무것도 안함
+    // 데스크톱
+    if (navDropdown) {
+        navDropdown.classList.remove('active');
     }
     
-    if (wrapper) {
-        // 부드러운 사라짐 애니메이션
-        wrapper.style.opacity = '0';
-        wrapper.style.transform = 'translateY(calc(100% + 70px))';
-        wrapper.style.visibility = 'hidden';
+    // 모바일
+    if (mobileDropdown) {
+        mobileDropdown.classList.remove('active');
     }
     
-    // 애니메이션 후 클래스 제거
-    setTimeout(() => {
-        if (navDropdown) {
-            navDropdown.classList.remove('active');
-        }
-        if (wrapper) {
-            // 스타일 초기화
-            wrapper.style.cssText = '';
-        }
-        // body 스크롤 복구 및 오버레이 제거
-        document.body.style.overflow = '';
-        document.body.classList.remove('genre-dropdown-open');
-    }, 300);
+    // body 스크롤 복구 및 오버레이 제거
+    document.body.style.overflow = '';
+    document.body.classList.remove('mobile-genre-open');
+    document.body.classList.remove('genre-dropdown-open');
 }
 
 // 장르 드롭다운 열기 함수
 function openGenreDropdown() {
     const navDropdown = document.querySelector('.nav-dropdown');
-    const wrapper = document.querySelector('.genre-dropdown-wrapper');
+    const mobileDropdown = document.getElementById('mobileGenreDropdown');
     
-    // 클래스 추가
-    if (navDropdown) {
-        navDropdown.classList.add('active');
-    }
-    document.body.style.overflow = 'hidden';
-    document.body.classList.add('genre-dropdown-open');
-    
-    // 모바일에서 직접 스타일 적용 (CSS 우선순위 문제 해결)
-    if (wrapper) {
-        // 강제로 스타일 적용
-        wrapper.style.cssText = `
-            opacity: 1 !important;
-            visibility: visible !important;
-            transform: translateY(0) !important;
-            display: flex !important;
-            position: fixed !important;
-            bottom: 70px !important;
-            left: 0 !important;
-            right: 0 !important;
-            z-index: 9999 !important;
-        `;
+    // 모바일인지 확인
+    if (window.innerWidth <= 768) {
+        // 모바일: 독립 드롭다운 사용
+        if (mobileDropdown) {
+            mobileDropdown.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            document.body.classList.add('mobile-genre-open');
+        }
+    } else {
+        // 데스크톱: 기존 드롭다운 사용
+        if (navDropdown) {
+            navDropdown.classList.add('active');
+        }
     }
 }
 
-// 장르 드롭다운 닫기 버튼 (모바일)
+// 장르 드롭다운이 열려있는지 확인
+function isGenreDropdownOpen() {
+    const navDropdown = document.querySelector('.nav-dropdown');
+    const mobileDropdown = document.getElementById('mobileGenreDropdown');
+    
+    if (window.innerWidth <= 768) {
+        return mobileDropdown && mobileDropdown.classList.contains('active');
+    } else {
+        return navDropdown && navDropdown.classList.contains('active');
+    }
+}
+
+// 모바일 장르 드롭다운 이벤트
 document.addEventListener('DOMContentLoaded', () => {
-    const closeBtn = document.getElementById('genreDropdownClose');
-    if (closeBtn) {
-        // 모든 이벤트 타입에 대응
-        ['click', 'touchstart', 'pointerdown'].forEach(eventType => {
-            closeBtn.addEventListener(eventType, (e) => {
+    const mobileDropdown = document.getElementById('mobileGenreDropdown');
+    const mobileCloseBtn = document.getElementById('mobileGenreClose');
+    
+    // 닫기 버튼
+    if (mobileCloseBtn) {
+        mobileCloseBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            closeGenreDropdown();
+        });
+    }
+    
+    // 장르 아이템 클릭
+    if (mobileDropdown) {
+        mobileDropdown.querySelectorAll('.mobile-genre-list a').forEach(link => {
+            link.addEventListener('click', (e) => {
                 e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
+                
+                const category = link.dataset.category;
+                const genreId = link.dataset.genre;
+                
                 closeGenreDropdown();
-            }, { passive: false, capture: true });
+                
+                setTimeout(() => {
+                    if (category) {
+                        changeCategory(category);
+                    } else if (genreId) {
+                        changeGenre(parseInt(genreId));
+                    }
+                    syncMobileTabBar('allGenres');
+                }, 100);
+            });
         });
     }
 });
@@ -1672,13 +1687,13 @@ document.addEventListener('click', (e) => {
     if (window.innerWidth > 768) return;
     
     // 드롭다운이 열려있지 않으면 무시
-    if (!document.body.classList.contains('genre-dropdown-open')) return;
+    if (!document.body.classList.contains('mobile-genre-open')) return;
     
-    const wrapper = document.querySelector('.genre-dropdown-wrapper');
+    const mobileDropdown = document.getElementById('mobileGenreDropdown');
     const tabBar = document.getElementById('mobileTabBar');
     
-    // 드롭다운 wrapper나 탭바 내부 클릭이면 무시
-    if (wrapper && wrapper.contains(e.target)) return;
+    // 드롭다운이나 탭바 내부 클릭이면 무시
+    if (mobileDropdown && mobileDropdown.contains(e.target)) return;
     if (tabBar && tabBar.contains(e.target)) return;
     
     // 오버레이(배경) 클릭 시 닫기
@@ -1977,17 +1992,10 @@ if (mobileTabBar) {
             
             // 장르 탭 클릭 시 드롭다운 토글
             if (category === 'allGenres') {
-                const navDropdown = document.querySelector('.nav-dropdown');
-                if (navDropdown) {
-                    const isActive = navDropdown.classList.contains('active');
-                    
-                    if (isActive) {
-                        // 닫기
-                        closeGenreDropdown();
-                    } else {
-                        // 열기
-                        openGenreDropdown();
-                    }
+                if (isGenreDropdownOpen()) {
+                    closeGenreDropdown();
+                } else {
+                    openGenreDropdown();
                 }
                 // 활성화 상태 업데이트
                 tabItems.forEach(t => t.classList.remove('active'));
