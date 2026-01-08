@@ -528,14 +528,29 @@ function createMovieCard(movie, index) {
         card.addEventListener('mouseleave', stopVideoPreview);
     }
     
-    // 클릭/터치 시 시네마틱 뷰어 열기
-    // 모바일과 데스크톱 모두 click 이벤트 사용 (터치 디바이스에서도 click 이벤트 발생)
-    card.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        stopVideoPreview();
-        openCinematicViewer(movie);
-    });
+    // 전체화면 버튼 클릭 시에만 시네마틱 뷰어 열기
+    const playOverlay = card.querySelector('.play-overlay');
+    if (playOverlay) {
+        playOverlay.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            stopVideoPreview();
+            openCinematicViewer(movie);
+        });
+    }
+    
+    // 데스크톱: 카드 전체 클릭 시에도 시네마틱 뷰어 열기
+    if (!isMobile) {
+        card.addEventListener('click', (e) => {
+            // play-overlay 클릭은 위에서 처리
+            if (e.target.closest('.play-overlay')) return;
+            
+            e.preventDefault();
+            e.stopPropagation();
+            stopVideoPreview();
+            openCinematicViewer(movie);
+        });
+    }
     
     return card;
 }
@@ -1925,15 +1940,8 @@ if (heroInfoBtn) {
     });
 }
 
-// 히어로 배너 클릭 시 시네마틱 뷰어 열기
-if (heroBanner) {
-    heroBanner.addEventListener('click', (e) => {
-        // 버튼 클릭이 아닌 경우에만
-        if (!e.target.closest('button') && heroMovie) {
-            openCinematicViewer(heroMovie);
-        }
-    });
-}
+// 히어로 배너는 버튼(예고편 보기, 상세정보)을 통해서만 시네마틱 뷰어 열기
+// 배너 자체 클릭은 아무 동작 없음 (위의 heroPlayBtn, heroInfoBtn 이벤트에서 처리)
 
 // 모바일 탭바 이벤트
 const mobileTabBar = document.getElementById('mobileTabBar');

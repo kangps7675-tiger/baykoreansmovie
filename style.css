@@ -1490,20 +1490,7 @@ body {
     overflow: hidden;
     background: var(--bg-card);
     cursor: pointer;
-    /* 모바일에서 터치 이벤트가 카드에 직접 전달되도록 */
     -webkit-tap-highlight-color: transparent;
-}
-
-/* 카드 내부 요소는 클릭 이벤트 무시 (카드 자체가 처리) */
-.movie-card * {
-    pointer-events: none;
-}
-
-/* 데스크톱에서만 호버 효과를 위해 pointer-events 복원 */
-@media (hover: hover) {
-    .movie-card * {
-        pointer-events: auto;
-    }
 }
     transition: var(--transition-smooth);
     animation: fadeInUp 0.6s ease-out backwards;
@@ -1529,7 +1516,7 @@ body {
     filter: brightness(0.7);
 }
 
-/* Play Overlay - 전체화면 확대 힌트 (우측 상단) */
+/* Play Overlay - 전체화면 버튼 (우측 상단) */
 .play-overlay {
     position: absolute;
     top: 10px;
@@ -1541,12 +1528,21 @@ body {
     opacity: 0;
     transform: translateY(-5px);
     transition: all 0.3s ease;
-    pointer-events: none;
+    pointer-events: auto; /* 클릭 가능 */
+    cursor: pointer;
 }
 
 .movie-card:hover .play-overlay {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* 모바일에서는 항상 표시 */
+@media (max-width: 768px) {
+    .play-overlay {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .play-button {
@@ -1560,7 +1556,6 @@ body {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
     transition: all 0.3s ease;
     cursor: pointer;
-    pointer-events: auto;
 }
 
 .play-button:hover {
