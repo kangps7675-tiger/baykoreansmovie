@@ -1490,6 +1490,21 @@ body {
     overflow: hidden;
     background: var(--bg-card);
     cursor: pointer;
+    /* 모바일에서 터치 이벤트가 카드에 직접 전달되도록 */
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* 카드 내부 요소는 클릭 이벤트 무시 (카드 자체가 처리) */
+.movie-card * {
+    pointer-events: none;
+}
+
+/* 데스크톱에서만 호버 효과를 위해 pointer-events 복원 */
+@media (hover: hover) {
+    .movie-card * {
+        pointer-events: auto;
+    }
+}
     transition: var(--transition-smooth);
     animation: fadeInUp 0.6s ease-out backwards;
 }
