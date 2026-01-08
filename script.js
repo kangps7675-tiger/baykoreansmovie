@@ -528,29 +528,13 @@ function createMovieCard(movie, index) {
         card.addEventListener('mouseleave', stopVideoPreview);
     }
     
-    // 전체화면 버튼 클릭 시에만 시네마틱 뷰어 열기
-    const playOverlay = card.querySelector('.play-overlay');
-    if (playOverlay) {
-        playOverlay.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            stopVideoPreview();
-            openCinematicViewer(movie);
-        });
-    }
-    
-    // 데스크톱: 카드 전체 클릭 시에도 시네마틱 뷰어 열기
-    if (!isMobile) {
-        card.addEventListener('click', (e) => {
-            // play-overlay 클릭은 위에서 처리
-            if (e.target.closest('.play-overlay')) return;
-            
-            e.preventDefault();
-            e.stopPropagation();
-            stopVideoPreview();
-            openCinematicViewer(movie);
-        });
-    }
+    // 카드 클릭 시 시네마틱 뷰어 열기 (모바일 + 데스크톱 모두)
+    card.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        stopVideoPreview();
+        openCinematicViewer(movie);
+    });
     
     return card;
 }
