@@ -529,36 +529,51 @@ function createMovieCard(movie, index) {
     }
     
     // 모바일: 터치 시 전체화면 예고편 재생 (스크롤과 구분)
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchStartTime = 0;
-    let isTouchScrolling = false;
-    
-    card.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-        touchStartTime = Date.now();
-        isTouchScrolling = false;
-    }, { passive: true });
-    
-    card.addEventListener('touchmove', (e) => {
-        const moveX = Math.abs(e.touches[0].clientX - touchStartX);
-        const moveY = Math.abs(e.touches[0].clientY - touchStartY);
-        // 5px 이상 이동하면 스크롤로 간주
-        if (moveX > 5 || moveY > 5) {
-            isTouchScrolling = true;
-        }
-    }, { passive: true });
-    
-    card.addEventListener('touchend', (e) => {
-        const touchDuration = Date.now() - touchStartTime;
+    if (isMobile) {
+        let cardTouchStartX = 0;
+        let cardTouchStartY = 0;
+        let cardTouchStartTime = 0;
+        let cardIsTouchScrolling = false;
         
-        // 스크롤 중이 아니고, 짧은 탭인 경우에만 시네마틱 뷰어 열기
-        if (!isTouchScrolling && touchDuration < 300) {
+        card.addEventListener('touchstart', (e) => {
+            cardTouchStartX = e.touches[0].clientX;
+            cardTouchStartY = e.touches[0].clientY;
+            cardTouchStartTime = Date.now();
+            cardIsTouchScrolling = false;
+        }, { passive: true });
+        
+        card.addEventListener('touchmove', (e) => {
+            const moveX = Math.abs(e.touches[0].clientX - cardTouchStartX);
+            const moveY = Math.abs(e.touches[0].clientY - cardTouchStartY);
+            // 10px 이상 이동하면 스크롤로 간주
+            if (moveX > 10 || moveY > 10) {
+                cardIsTouchScrolling = true;
+            }
+        }, { passive: true });
+        
+        card.addEventListener('touchend', (e) => {
+            // 스크롤 중이면 무시
+            if (cardIsTouchScrolling) {
+                cardIsTouchScrolling = false;
+                return;
+            }
+            
+            const touchDuration = Date.now() - cardTouchStartTime;
+            
+            // 짧은 탭인 경우에만 시네마틱 뷰어 열기
+            if (touchDuration < 400) {
+                e.preventDefault();
+                e.stopPropagation();
+                openCinematicViewer(movie);
+            }
+        }, { passive: false });
+        
+        // 모바일에서 click 이벤트도 막기
+        card.addEventListener('click', (e) => {
             e.preventDefault();
-            openCinematicViewer(movie);
-        }
-    }, { passive: false });
+            e.stopPropagation();
+        });
+    }
     
     // 클릭 시 시네마틱 뷰어 열기 (데스크톱)
     card.addEventListener('click', (e) => {
@@ -1552,7 +1567,10 @@ if (genreDropdown) {
                 // 약간의 딜레이 후 카테고리 변경 (드롭다운 닫힘 애니메이션 후)
                 setTimeout(() => {
                     changeCategory(category);
-                    syncMobileTabBar('allGenres');
+                    // 장르 드롭다운에서 선택했으므로 탭바를 장르로 변경
+                    if (window.innerWidth <= 768) {
+                        syncMobileTabBar('allGenres');
+                    }
                 }, 100);
                 return;
             }
@@ -1563,7 +1581,10 @@ if (genreDropdown) {
                 // 약간의 딜레이 후 장르 변경 (드롭다운 닫힘 애니메이션 후)
                 setTimeout(() => {
                     changeGenre(genreId);
-                    syncMobileTabBar('allGenres');
+                    // 장르 드롭다운에서 선택했으므로 탭바를 장르로 변경
+                    if (window.innerWidth <= 768) {
+                        syncMobileTabBar('allGenres');
+                    }
                 }, 100);
             }
         };
